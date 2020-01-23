@@ -16,4 +16,9 @@
     Public Sub removeCard(card As Card)
         cards.Remove(card)
     End Sub
+
+    Public Sub sortHand()
+        cards.Sort()
+    End Sub
+
 End Class

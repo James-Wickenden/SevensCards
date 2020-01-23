@@ -9,7 +9,8 @@
         Dim tempCards As New List(Of Card)
         For i As Integer = 0 To 3
             For j As Integer = 0 To 12
-                If j <> CardEnums.Value.SEVEN Then tempCards.Add(New Card(i, j))
+                If j > CardEnums.Value.EIGHT Or j < CardEnums.Value.SIX Then tempCards.Add(New Card(i, j))
+                If j = CardEnums.Value.EIGHT Or j = CardEnums.Value.SIX Then tempCards.Add(New Card(i, j, True))
             Next
         Next
         Return tempCards.ToArray
