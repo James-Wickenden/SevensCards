@@ -6,4 +6,11 @@
         Me.suit = suit
         Me.value = value
     End Sub
+
+    Public Function getSuit() As CardEnums.Suit
+        Return suit
+    End Function
+    Public Function getValue() As CardEnums.Value
+        Return value
+    End Function
 End Class

@@ -71,6 +71,7 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Board.vb" />
     <Compile Include="Card.vb" />
     <Compile Include="CardEnums.vb" />
     <Compile Include="DebugGameModel.vb" />
