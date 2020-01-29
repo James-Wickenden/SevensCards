@@ -29,15 +29,7 @@
     End Sub
 
     Private Sub updateValidCards(card As Card)
-        Dim val As CardEnums.Value = -1
-        Dim suit As CardEnums.Suit = card.getSuit
-        If card.getValue < CardEnums.Value.SEVEN And card.getValue > CardEnums.Value.ACE Then val = card.getValue - 1
-        If card.getValue > CardEnums.Value.SEVEN And card.getValue < CardEnums.Value.KING Then val = card.getValue + 1
-            For i As Integer = 0 To 3
-            For Each testCard As Card In players(i).getHand
-                If testCard.getValue = val And testCard.getSuit = suit Then testCard.setValid(True)
-            Next
-        Next
+        If card.getValue <> CardEnums.Value.KING And card.getValue <> CardEnums.Value.ACE Then card.getadjCard.setValid(True)
     End Sub
 
     Public Function getHand(index As Integer) As List(Of Card)

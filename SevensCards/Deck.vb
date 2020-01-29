@@ -7,11 +7,20 @@
 
     Private Function generateDeck() As Card()
         Dim tempCards As New List(Of Card)
-        For i As Integer = 0 To 3
-            For j As Integer = 0 To 12
-                If j > CardEnums.Value.EIGHT Or j < CardEnums.Value.SIX Then tempCards.Add(New Card(i, j))
-                If j = CardEnums.Value.EIGHT Or j = CardEnums.Value.SIX Then tempCards.Add(New Card(i, j, True))
+
+        For i As Integer = CardEnums.Suit.DIAMOND To CardEnums.Suit.SPADE
+            tempCards.Add(New Card(i, CardEnums.Value.KING, False))
+            For j As Integer = CardEnums.Value.QUEEN To CardEnums.Value.EIGHT Step -1
+                tempCards.Add(New Card(i, j, False, tempCards.Last))
+                If tempCards.Last.getValue = CardEnums.Value.EIGHT Then tempCards.Last.setValid(True)
             Next
+
+            tempCards.Add(New Card(i, CardEnums.Value.ACE, False))
+            For j As Integer = CardEnums.Value.TWO To CardEnums.Value.SIX Step 1
+                tempCards.Add(New Card(i, j, False, tempCards.Last))
+                If tempCards.Last.getValue = CardEnums.Value.SIX Then tempCards.Last.setValid(True)
+            Next
+
         Next
         Return tempCards.ToArray
     End Function

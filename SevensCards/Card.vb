@@ -6,10 +6,12 @@
     Private view, validBar As New Panel
     Private frontImg, backImg As Image
     Private valid, faceUp As Boolean
+    Private adjCard As Card
 
-    Public Sub New(suit As CardEnums.Suit, value As CardEnums.Value, Optional valid As Boolean = False)
+    Public Sub New(suit As CardEnums.Suit, value As CardEnums.Value, valid As Boolean, Optional adjCard As Card = Nothing)
         Me.suit = suit
         Me.value = value
+        Me.adjCard = adjCard
         setValid(valid)
 
         frontImg = Image.FromFile((New FunctionPool).PATH & "Resources\" & "cards\" & getCardText() & ".jpg")
@@ -47,7 +49,12 @@
     Public Function getValidBar() As Panel
         Return validBar
     End Function
-
+    Public Function getadjCard() As Card
+        Return adjCard
+    End Function
+    Public Sub setadjCard(c As Card)
+        adjCard = c
+    End Sub
     Public Function getCardText() As String
         Dim res As String = ""
 

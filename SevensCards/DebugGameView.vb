@@ -24,6 +24,7 @@
         fp.objectHandler.addButton(handsPanel, but_Skip, 20, ((CARDWIDTH + 10) * 12) + 40, 50, CARDWIDTH, "Skip", AddressOf skip)
     End Sub
 
+
     Public Sub drawView(board As Board, players() As Hand, turn As Integer)
 
         For i As Integer = 0 To 3
