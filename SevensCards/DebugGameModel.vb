@@ -5,6 +5,10 @@
     Private board As New Board
     Private finishers As Integer = 0
 
+    'TODO:
+    '   Make players a class with human and COM inheritors
+    '   Implement networking and refactor for decentralised hands
+
     Public Sub New(view As DebugGameView)
         Me.view = view
 

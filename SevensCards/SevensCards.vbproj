@@ -74,6 +74,7 @@
     <Compile Include="Board.vb" />
     <Compile Include="Card.vb" />
     <Compile Include="CardEnums.vb" />
+    <Compile Include="COMModel.vb" />
     <Compile Include="DebugGameModel.vb" />
     <Compile Include="DebugGameView.Designer.vb">
       <DependentUpon>DebugGameView.vb</DependentUpon>
