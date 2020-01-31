@@ -13,7 +13,7 @@
     Public Sub New(view As DebugGameView)
         Me.view = view
 
-        gameSetup()
+        GameSetup()
         Me.view.DrawView(board, GetHands, turn)
         GameLoop()
     End Sub
@@ -68,8 +68,8 @@
     End Function
 
     Public Sub Skip()
-        Dim newTurn As Integer = getNextPlayer()
-        view.changePlayer(players(turn).GetHandCards, players(newTurn).GetHandCards, newTurn)
+        Dim newTurn As Integer = GetNextPlayer()
+        view.ChangePlayer(players(turn).GetHandCards, players(newTurn).GetHandCards, newTurn)
         turn = newTurn
     End Sub
 
