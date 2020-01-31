@@ -5,19 +5,19 @@
         cards = hand.ToList
     End Sub
 
-    Public Function getHand() As List(Of Card)
+    Public Function GetHand() As List(Of Card)
         Return cards
     End Function
 
-    Public Sub addCard(card As Card)
+    Public Sub AddCard(card As Card)
         cards.Add(card)
     End Sub
 
-    Public Sub removeCard(card As Card)
+    Public Sub RemoveCard(card As Card)
         cards.Remove(card)
     End Sub
 
-    Public Sub sortHand()
+    Public Sub SortHand()
         cards.Sort()
     End Sub
 

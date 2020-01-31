@@ -1,17 +1,17 @@
 ﻿Public Class Player_HUM
     Inherits Player
 
-    Public Event HUM_Move(card As Card)
-
-    Public Sub New(hand As Hand)
-        Me.hand = hand
-    End Sub
-
-    Private Function getMoveCard(card As Card) As Card Handles Me.HUM_Move
-        Return card
+    Private Async Function GetPlayedCard_HUM() As Task(Of Card)
+        While playedCard Is Nothing
+            Await (Task.Delay(100))
+        End While
+        Return playedCard
     End Function
 
-    Public Overrides Async Function GetMove() As Task(Of Card)
-        Return hand.getHand(0)
+    Public Overrides Function GetMove() As Card
+        For Each card As Card In hand.GetHand
+            If card.GetValid Then Return card
+        Next
+        Return Nothing
     End Function
 End Class

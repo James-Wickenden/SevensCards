@@ -8,7 +8,7 @@
         Next
     End Sub
 
-    Public Function getSuit(index As Integer) As Hand
+    Public Function GetSuit(index As Integer) As Hand
         Return suits(index)
     End Function
 End Class

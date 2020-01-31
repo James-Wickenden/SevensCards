@@ -8,13 +8,13 @@
         fp.objectHandler.addButton(Me, but_COMGame, 100, 25, 50, 150, "New COMGame", AddressOf load_COMGame)
     End Sub
 
-    Private Sub load_DebugGame()
+    Private Sub Load_DebugGame()
         Dim debugGameView As New DebugGameView
         debugGameView.Show()
         Me.Close()
     End Sub
 
-    Private Sub load_COMGame()
+    Private Sub Load_COMGame()
         MsgBox("wip")
     End Sub
 End Class

@@ -1,78 +1,105 @@
 ﻿Public Class DebugGameModel
     Private view As DebugGameView
     Private turn As Integer = 1
-    Private players(3) As Hand
+    Private players(3) As Player
     Private board As New Board
     Private finishers As Integer = 0
 
     'TODO:
     '   Make players a class with human and COM inheritors
     '   Implement networking and refactor for decentralised hands
+    '   Move view into dedicated thread!
 
     Public Sub New(view As DebugGameView)
         Me.view = view
 
         gameSetup()
-        Me.view.drawView(board, players, turn)
+        Me.view.DrawView(board, GetHands, turn)
+        GameLoop()
     End Sub
 
-    Private Sub gameSetup()
+    Private Sub GameSetup()
         Dim deck As New Deck()
-        deck.shuffleDeck()
+        deck.ShuffleDeck()
 
         For i As Integer = 0 To 3
+            players(i) = New Player_HUM()
             Dim playerHand As New List(Of Card)
             For j As Integer = 0 To 11
-                playerHand.Add(deck.getCard((12 * i) + j))
+                playerHand.Add(deck.GetCard((12 * i) + j))
             Next
-            players(i) = New Hand(playerHand.ToArray)
-            players(i).sortHand()
+            players(i).SetHand(New Hand(playerHand.ToArray))
+            players(i).GetHand.SortHand()
         Next
         Randomize()
         turn = Int((4) * Rnd())
     End Sub
 
-    Private Sub updateValidCards(card As Card)
-        If card.getValue <> CardEnums.Value.KING And card.getValue <> CardEnums.Value.ACE Then card.getadjCard.setValid(True)
+    Private Sub GameLoop()
+        Do
+            Dim card As Card = players(turn).GetMove
+            If card IsNot Nothing Then
+                Move(card)
+                players(turn).SetPlayedCard(Nothing)
+            Else
+                Skip()
+            End If
+        Loop Until finishers = 4
     End Sub
 
-    Public Function getHand(index As Integer) As List(Of Card)
-        Return players(index).getHand
+    Private Function GetHands() As Hand()
+        Dim hands As New List(Of Hand)
+        For i As Integer = 0 To 3
+            hands.Add(players(i).GetHand)
+        Next
+        Return hands.ToArray
     End Function
 
-    Public Function getTurn() As Integer
+    Private Sub UpdateValidCards(card As Card)
+        If card.GetValue <> CardEnums.Value.KING And card.GetValue <> CardEnums.Value.ACE Then card.GetadjCard.SetValid(True)
+    End Sub
+
+    Public Function GetHand(index As Integer) As List(Of Card)
+        Return players(index).GetHandCards
+    End Function
+
+    Public Function GetTurn() As Integer
         Return turn
     End Function
 
-    Public Sub skip()
+    Public Sub Skip()
         Dim newTurn As Integer = getNextPlayer()
-        view.changePlayer(players(turn).getHand, players(newTurn).getHand, newTurn)
+        view.changePlayer(players(turn).GetHandCards, players(newTurn).GetHandCards, newTurn)
         turn = newTurn
     End Sub
 
-    Private Function getNextPlayer() As Integer
+    Private Function GetNextPlayer() As Integer
         Dim x As Integer = turn
         Do
             x = (x + 1) Mod 4
-        Loop Until players(x).getHand.Count > 0
+        Loop Until players(x).GetHandCards.Count > 0
         Return x
     End Function
 
-    Public Sub playCard(card As Card)
-        Dim newTurn As Integer = getNextPlayer()
-        If Not card.getValid Then Exit Sub
-        board.getSuit(card.getSuit).addCard(card)
+    Public Sub PlayCard(card As Card)
+        players(turn).SetPlayedCard(card)
+    End Sub
 
-        view.removeCardFromHand(players(turn).getHand, card)
-        view.drawCardOnBoard(card)
-        view.changePlayer(players(turn).getHand, players(newTurn).getHand, newTurn)
-        players(turn).removeCard(card)
+    Private Sub Move(card As Card)
+        Dim newTurn As Integer = GetNextPlayer()
+        If Not card.GetValid Then Exit Sub
+        board.GetSuit(card.GetSuit).AddCard(card)
 
-        If players(turn).getHand.Count = 0 Then
+        view.RemoveCardFromHand(players(turn).GetHandCards, card)
+        view.DrawCardOnBoard(card)
+        view.ChangePlayer(players(turn).GetHandCards, players(newTurn).GetHandCards, newTurn)
+        players(turn).GetHand.RemoveCard(card)
+
+        If players(turn).GetHandCards.Count = 0 Then
             finishers += 1
-            view.finisher(finishers, turn)
+            view.Finisher(finishers, turn)
         End If
-        updateValidCards(card)
+        UpdateValidCards(card)
         turn = newTurn
     End Sub
 End Class

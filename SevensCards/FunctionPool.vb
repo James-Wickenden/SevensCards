@@ -3,7 +3,7 @@
 
     Public objectHandler As New ObjectHandler
 
-    Public Sub formSetup(form As Form)
+    Public Sub FormSetup(form As Form)
         form.Icon = My.Resources.icon
         form.WindowState = FormWindowState.Maximized
         form.BackColor = Color.DimGray

@@ -8,16 +8,14 @@
 
     Private difficulty As Integer = 0
 
-    Public Sub New(hand As Hand, difficulty As Integer)
-        Me.hand = hand
+    Public Sub SetDifficulty(difficulty As Integer)
         Me.difficulty = difficulty
     End Sub
 
-    Public Sub setDifficulty(difficulty As Integer)
-        Me.difficulty = difficulty
-    End Sub
-
-    Public Overrides Async Function GetMove() As Task(Of Card)
-        Return hand.getHand(0)
+    Public Overrides Function GetMove() As Card
+        For Each card As Card In hand.GetHand
+            If card.GetValid Then Return card
+        Next
+        Return Nothing
     End Function
 End Class

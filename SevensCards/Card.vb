@@ -14,7 +14,7 @@
         Me.adjCard = adjCard
         setValid(valid)
 
-        frontImg = Image.FromFile((New FunctionPool).PATH & "Resources\" & "cards\" & getCardText() & ".jpg")
+        frontImg = Image.FromFile((New FunctionPool).PATH & "Resources\" & "cards\" & GetCardText() & ".jpg")
         backImg = My.Resources.blue_back
         view.BackgroundImage = backImg
         validBar.BackColor = Color.Gray
@@ -23,7 +23,7 @@
         validBar.BorderStyle = BorderStyle.FixedSingle
     End Sub
 
-    Public Sub setValid(valid As Boolean)
+    Public Sub SetValid(valid As Boolean)
         Me.valid = valid
         If faceUp Then
             If Not valid Then validBar.BackColor = Color.Red
@@ -31,31 +31,32 @@
         End If
     End Sub
 
-    Public Function getSuit() As CardEnums.Suit
+    Public Function GetSuit() As CardEnums.Suit
         Return suit
     End Function
-    Public Function getValue() As CardEnums.Value
+    Public Function GetValue() As CardEnums.Value
         Return value
     End Function
-    Public Function getValid() As Boolean
+    Public Function GetValid() As Boolean
         Return valid
     End Function
-    Public Function getFaceUp() As Boolean
+    Public Function GetFaceUp() As Boolean
         Return faceUp
     End Function
-    Public Function getView() As Panel
+    Public Function GetView() As Panel
         Return view
     End Function
-    Public Function getValidBar() As Panel
+    Public Function GetValidBar() As Panel
         Return validBar
     End Function
-    Public Function getadjCard() As Card
+    Public Function GetadjCard() As Card
         Return adjCard
     End Function
-    Public Sub setadjCard(c As Card)
+    Public Sub SetadjCard(c As Card)
         adjCard = c
     End Sub
-    Public Function getCardText() As String
+
+    Public Function GetCardText() As String
         Dim res As String = ""
 
         Select Case value
@@ -74,7 +75,7 @@
         Return res
     End Function
 
-    Public Sub flip()
+    Public Sub Flip()
         If faceUp Then
             faceUp = False
             view.BackgroundImage = backImg
@@ -88,10 +89,10 @@
 
     End Sub
 
-    Private Function compare(x As Card) As Integer
-        If x.getSuit = suit And x.getValue = value Then Return 0
-        If x.getSuit <> suit Then Return (x.getSuit > suit)
-        Return (x.getValue > value)
+    Private Function Compare(x As Card) As Integer
+        If x.GetSuit = suit And x.GetValue = value Then Return 0
+        If x.GetSuit <> suit Then Return (x.GetSuit > suit)
+        Return (x.GetValue > value)
     End Function
 
     Private Function IComparable_CompareTo(obj As Object) As Integer Implements IComparable.CompareTo
