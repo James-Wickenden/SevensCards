@@ -9,7 +9,8 @@
     Private placeLabels(3) As Label
 
     Private Sub DebugGameView_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        fp.formSetup(Me)
+        debugGameModel = New DebugGameModel(Me)
+        fp.FormSetup(Me)
         PanelSetup()
     End Sub
 
@@ -21,10 +22,6 @@
         handsPanel.BackColor = Color.BurlyWood
 
         fp.objectHandler.AddButton(handsPanel, but_Skip, 20, ((CARDWIDTH + 10) * 12) + 40, 50, CARDWIDTH, "Skip", AddressOf Skip)
-    End Sub
-
-    Public Sub SetDebugGameModel(debugGameModel As DebugGameModel)
-        Me.debugGameModel = debugGameModel
     End Sub
 
     Public Sub DrawView(board As Board, players() As Hand, turn As Integer)
@@ -67,7 +64,7 @@
     End Sub
 
     Public Sub RemoveCardFromHand(hand As List(Of Card), card As Card)
-        card.GetValidBar.Invoke(Sub() Dispose())
+        card.GetValidBar.Dispose()
         For i As Integer = hand.IndexOf(card) To hand.Count - 1
             hand(i).GetView.Left -= (CARDWIDTH + 10)
             hand(i).GetValidBar.Left -= (CARDWIDTH + 10)
@@ -109,7 +106,7 @@
 
     Private Sub CardDClicked(sender As Object, e As System.EventArgs)
         Dim c As Card = IsMyCard(sender)
-        If Not IsNothing(c) Then debugGameModel.PlayCard(c)
+        If Not IsNothing(c) Then debugGameModel.Move(c)
     End Sub
 
     Private Sub Skip()

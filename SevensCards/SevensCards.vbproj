@@ -84,7 +84,6 @@
     <Compile Include="Deck.vb" />
     <Compile Include="FunctionPool.vb" />
     <Compile Include="Hand.vb" />
-    <Compile Include="Player.vb" />
     <Compile Include="Menu.Designer.vb">
       <DependentUpon>Menu.vb</DependentUpon>
     </Compile>
@@ -107,9 +106,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="objectHandler.vb" />
-    <Compile Include="Player_COM.vb" />
-    <Compile Include="Player_HUM.vb" />
-    <Compile Include="Threader.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="DebugGameView.resx">
