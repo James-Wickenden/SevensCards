@@ -3,8 +3,17 @@
     Protected hand As Hand
     Protected view As DebugGameView
     Protected callback As FunctionPool.moveToBeMade
-
+    Protected skipMove As Boolean = False
+    Protected isMyMove As Boolean = False
     Public MustOverride Sub GetMove()
+
+    Public Sub Skip()
+        skipMove = True
+    End Sub
+
+    Public Sub SetIsMyMove(isMyMove As Boolean)
+        Me.isMyMove = isMyMove
+    End Sub
 
     Public Function GetHand() As Hand
         Return hand

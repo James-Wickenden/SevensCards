@@ -22,7 +22,7 @@
         deck.ShuffleDeck()
 
         For i As Integer = 0 To 3
-            players(i) = New Player_HUM()
+            players(i) = New Player_COM()
             players(i).setCallback(AddressOf ResultCallback)
             Dim playerHand As New List(Of Card)
             For j As Integer = 0 To 11
@@ -38,20 +38,10 @@
     Private Sub GameLoop()
         moveThread = New System.Threading.Thread(AddressOf players(turn).GetMove)
         moveThread.Start()
+        players(turn).SetIsMyMove(True)
     End Sub
 
-    Private Function GetCorrespondingCard(chosenCard As Card) As Card
-
-        For i As Integer = 0 To 3
-            For Each card As Card In players(i).GetHandCards
-                If chosenCard.Equals(card) Then Return card
-            Next
-        Next
-        Return Nothing
-    End Function
-
-    Public Sub ResultCallback(chosenCard As Card)
-        Dim card As Card = GetCorrespondingCard(chosenCard)
+    Public Sub ResultCallback(card As Card)
         Move(card)
     End Sub
 
@@ -76,9 +66,7 @@
     End Function
 
     Public Sub Skip()
-        Dim newTurn As Integer = GetNextPlayer()
-        debugGameView.ChangePlayer(players(turn).GetHandCards, players(newTurn).GetHandCards, newTurn)
-        turn = newTurn
+        players(turn).skip()
     End Sub
 
     Private Function GetNextPlayer() As Integer
@@ -94,27 +82,27 @@
     End Sub
 
     Public Sub Move(card As Card)
-        If card Is Nothing Then Exit Sub
-        If Not card.GetValid Then
-            GameLoop()
-            Exit Sub
-        End If
+        Dim skipped As Boolean = False
+        If card Is Nothing Then skipped = True
 
         Dim newTurn As Integer = GetNextPlayer()
-        board.GetSuit(card.GetSuit).AddCard(card)
 
-        debugGameView.RemoveCardFromHand(players(turn).GetHandCards, card)
-        debugGameView.DrawCardOnBoard(card)
+        If Not skipped Then
+            board.GetSuit(card.GetSuit).AddCard(card)
+            debugGameView.RemoveCardFromHand(players(turn).GetHandCards, card)
+            debugGameView.DrawCardOnBoard(card)
+            players(turn).GetHand.RemoveCard(card)
+            UpdateValidCards(card)
+        End If
+
         debugGameView.ChangePlayer(players(turn).GetHandCards, players(newTurn).GetHandCards, newTurn)
-        players(turn).GetHand.RemoveCard(card)
 
         If players(turn).GetHandCards.Count = 0 Then
             finishers += 1
             debugGameView.Finisher(finishers, turn)
         End If
-        UpdateValidCards(card)
-        turn = newTurn
 
+        turn = newTurn
         GameLoop()
     End Sub
 End Class

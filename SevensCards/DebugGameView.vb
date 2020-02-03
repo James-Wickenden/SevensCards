@@ -51,7 +51,7 @@
     Public Sub DrawCardOnBoard(card As Card)
         Me.Invoke(Sub() fp.objectHandler.AddObject(boardPanel, card.GetView, 20 + (card.GetSuit * (CARDHEIGHT + 10)),
                                                    40 + (card.GetValue * (CARDWIDTH + 10)), CARDHEIGHT, CARDWIDTH, ""))
-        Me.Invoke(Sub() card.Flip())
+        If card.GetValue = CardEnums.Value.SEVEN Then Me.Invoke(Sub() card.Flip())
         Me.Invoke(Sub() card.GetView.BorderStyle = BorderStyle.FixedSingle)
     End Sub
 
@@ -68,6 +68,7 @@
 
     Public Sub RemoveCardFromHand(hand As List(Of Card), card As Card)
         Me.Invoke(Sub() card.GetValidBar.Dispose())
+        If Not hand.Contains(card) Then Exit Sub
         For i As Integer = hand.IndexOf(card) To hand.Count - 1
             Me.Invoke(Sub() hand(i).GetView.Left -= (CARDWIDTH + 10))
             Me.Invoke(Sub() hand(i).GetValidBar.Left -= (CARDWIDTH + 10))
@@ -109,7 +110,9 @@
 
     Private Sub CardDClicked(sender As Object, e As System.EventArgs)
         Dim c As Card = IsMyCard(sender)
-        If Not IsNothing(c) Then debugGameModel.PlayCard(c)
+        If Not IsNothing(c) Then
+            If c.GetValid Then debugGameModel.PlayCard(c)
+        End If
     End Sub
 
     Private Sub Skip()

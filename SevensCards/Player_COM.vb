@@ -13,8 +13,14 @@
     End Sub
 
     Public Overrides Sub GetMove()
-        For Each card As Card In hand.GetHand
-            If card.GetValid Then callback(card)
+        While Not isMyMove
+        End While
+        isMyMove = False
+        For i As Integer = 0 To hand.GetHand.Count - 1
+            If hand.GetHand(i).GetValid Then
+                playedCard = Nothing
+                callback(hand.GetHand(i))
+            End If
         Next
         callback(Nothing)
     End Sub

@@ -2,8 +2,16 @@
     Inherits Player
 
     Private Function GetPlayedCard_HUM() As Card
-        While playedCard Is Nothing
+        While Not isMyMove
         End While
+        isMyMove = False
+        While playedCard Is Nothing
+            If skipMove Then
+                skipMove = False
+                Return Nothing
+            End If
+        End While
+
         Return playedCard
     End Function
 
