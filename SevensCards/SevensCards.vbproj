@@ -109,7 +109,7 @@
     <Compile Include="objectHandler.vb" />
     <Compile Include="Player_COM.vb" />
     <Compile Include="Player_HUM.vb" />
-    <Compile Include="Threader.vb" />
+    <Compile Include="TODO.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="DebugGameView.resx">

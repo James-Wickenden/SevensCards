@@ -5,10 +5,6 @@
     Private board As New Board
     Private finishers As Integer = 0
     Private moveThread As Threading.Thread
-    'TODO:
-    '   Make players a class with human and COM inheritors
-    '   Implement networking and refactor for decentralised hands
-    '   Move view into dedicated thread!
 
     Public Sub New(menu As Menu)
         debugGameView = New DebugGameView()
