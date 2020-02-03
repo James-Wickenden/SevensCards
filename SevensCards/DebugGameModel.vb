@@ -1,20 +1,23 @@
 ﻿Public Class DebugGameModel
-    Private view As DebugGameView
+    Private debugGameView As DebugGameView
     Private turn As Integer = 1
     Private players(3) As Player
     Private board As New Board
     Private finishers As Integer = 0
-
+    Private moveThread As Threading.Thread
     'TODO:
     '   Make players a class with human and COM inheritors
     '   Implement networking and refactor for decentralised hands
     '   Move view into dedicated thread!
 
-    Public Sub New(view As DebugGameView)
-        Me.view = view
+    Public Sub New(menu As Menu)
+        debugGameView = New DebugGameView()
+        debugGameView.SetDebugGameModel(Me)
+        debugGameView.Show()
+        menu.Close()
 
         GameSetup()
-        Me.view.DrawView(board, GetHands, turn)
+        debugGameView.DrawView(board, GetHands, turn)
         GameLoop()
     End Sub
 
@@ -24,6 +27,7 @@
 
         For i As Integer = 0 To 3
             players(i) = New Player_HUM()
+            players(i).setCallback(AddressOf ResultCallback)
             Dim playerHand As New List(Of Card)
             For j As Integer = 0 To 11
                 playerHand.Add(deck.GetCard((12 * i) + j))
@@ -36,15 +40,25 @@
     End Sub
 
     Private Sub GameLoop()
-        Do
-            Dim card As Card = players(turn).GetMove
-            If card IsNot Nothing Then
-                Move(card)
-                players(turn).SetPlayedCard(Nothing)
-            Else
-                Skip()
-            End If
-        Loop Until finishers = 4
+        moveThread = New System.Threading.Thread(AddressOf players(turn).GetMove)
+        moveThread.Start()
+
+    End Sub
+
+    Private Function GetCorrespondingCard(chosenCard As Card) As Card
+
+        For i As Integer = 0 To 3
+            For Each card As Card In players(i).GetHandCards
+                If chosenCard.Equals(card) Then Return card
+            Next
+        Next
+        Return Nothing
+    End Function
+
+    Public Sub ResultCallback(chosenCard As Card)
+
+        Dim card As Card = GetCorrespondingCard(chosenCard)
+        Move(card)
     End Sub
 
     Private Function GetHands() As Hand()
@@ -69,7 +83,7 @@
 
     Public Sub Skip()
         Dim newTurn As Integer = GetNextPlayer()
-        view.ChangePlayer(players(turn).GetHandCards, players(newTurn).GetHandCards, newTurn)
+        debugGameView.ChangePlayer(players(turn).GetHandCards, players(newTurn).GetHandCards, newTurn)
         turn = newTurn
     End Sub
 
@@ -85,21 +99,22 @@
         players(turn).SetPlayedCard(card)
     End Sub
 
-    Private Sub Move(card As Card)
+    Public Sub Move(card As Card)
         Dim newTurn As Integer = GetNextPlayer()
         If Not card.GetValid Then Exit Sub
         board.GetSuit(card.GetSuit).AddCard(card)
 
-        view.RemoveCardFromHand(players(turn).GetHandCards, card)
-        view.DrawCardOnBoard(card)
-        view.ChangePlayer(players(turn).GetHandCards, players(newTurn).GetHandCards, newTurn)
+        debugGameView.RemoveCardFromHand(players(turn).GetHandCards, card)
+        debugGameView.DrawCardOnBoard(card)
+        debugGameView.ChangePlayer(players(turn).GetHandCards, players(newTurn).GetHandCards, newTurn)
         players(turn).GetHand.RemoveCard(card)
 
         If players(turn).GetHandCards.Count = 0 Then
             finishers += 1
-            view.Finisher(finishers, turn)
+            debugGameView.Finisher(finishers, turn)
         End If
         UpdateValidCards(card)
         turn = newTurn
+
     End Sub
 End Class

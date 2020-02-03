@@ -12,10 +12,10 @@
         Me.difficulty = difficulty
     End Sub
 
-    Public Overrides Function GetMove() As Card
+    Public Overrides Sub GetMove()
         For Each card As Card In hand.GetHand
-            If card.GetValid Then Return card
+            If card.GetValid Then callback(card)
         Next
-        Return Nothing
-    End Function
+        callback(Nothing)
+    End Sub
 End Class

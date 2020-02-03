@@ -9,9 +9,7 @@
     End Sub
 
     Private Sub Load_DebugGame()
-        Dim debugGameView As New DebugGameView
-        debugGameView.Show()
-        Me.Close()
+        Dim debugGameModel As New DebugGameModel(Me)
     End Sub
 
     Private Sub Load_COMGame()

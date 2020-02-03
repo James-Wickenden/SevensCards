@@ -1,5 +1,6 @@
 ﻿Public Class FunctionPool
     Public PATH As String = AppDomain.CurrentDomain.BaseDirectory
+    Public Delegate Sub moveToBeMade(card As Card)
 
     Public objectHandler As New ObjectHandler
 

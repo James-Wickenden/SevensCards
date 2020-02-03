@@ -1,6 +1,6 @@
 ﻿Public Class DebugGameView
     Private fp As New FunctionPool
-    Private debugGame As DebugGameModel
+    Private debugGameModel As DebugGameModel
     Const CARDHEIGHT As Integer = 105
     Const CARDWIDTH As Integer = 70
     Private lastClicked As Object
@@ -11,9 +11,6 @@
     Private Sub DebugGameView_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         fp.formSetup(Me)
         PanelSetup()
-        Dim debugGame As New DebugGameModel(Me)
-        'Dim modelThread As New Threading.Thread(Sub() debugGame = New DebugGameModel(Me))
-        'modelThread.Start()
     End Sub
 
     Private Sub PanelSetup()
@@ -23,21 +20,24 @@
         handsPanel.Height = Me.Height - handsPanel.Top
         handsPanel.BackColor = Color.BurlyWood
 
-        fp.objectHandler.AddButton(handsPanel, but_Skip, 20, ((CARDWIDTH + 10) * 12) + 40, 50, CARDWIDTH, "Skip", AddressOf skip)
+        fp.objectHandler.AddButton(handsPanel, but_Skip, 20, ((CARDWIDTH + 10) * 12) + 40, 50, CARDWIDTH, "Skip", AddressOf Skip)
     End Sub
 
+    Public Sub SetDebugGameModel(debugGameModel As DebugGameModel)
+        Me.debugGameModel = debugGameModel
+    End Sub
 
     Public Sub DrawView(board As Board, players() As Hand, turn As Integer)
 
         For i As Integer = 0 To 3
             For Each card As Card In board.GetSuit(i).GetHand
-                drawCardOnBoard(card)
+                DrawCardOnBoard(card)
             Next
         Next
 
         For i As Integer = 0 To 3
             For Each card As Card In players(i).GetHand
-                drawCardOnHand(card, players(i), i, turn)
+                DrawCardOnHand(card, players(i), i, turn)
 
             Next
         Next
@@ -62,12 +62,12 @@
                                    40 + (player.GetHand.IndexOf(card) * (CARDWIDTH + 10)), 5, CARDWIDTH, card.GetValid.ToString)
         If i = turn Then card.Flip()
 
-        AddHandler(card.GetView.MouseClick), AddressOf cardSClicked
-        AddHandler(card.GetView.MouseDoubleClick), AddressOf cardDClicked
+        AddHandler(card.GetView.MouseClick), AddressOf CardSClicked
+        AddHandler(card.GetView.MouseDoubleClick), AddressOf CardDClicked
     End Sub
 
     Public Sub RemoveCardFromHand(hand As List(Of Card), card As Card)
-        card.GetValidBar.Dispose()
+        card.GetValidBar.Invoke(Sub() Dispose())
         For i As Integer = hand.IndexOf(card) To hand.Count - 1
             hand(i).GetView.Left -= (CARDWIDTH + 10)
             hand(i).GetValidBar.Left -= (CARDWIDTH + 10)
@@ -86,7 +86,7 @@
     End Sub
 
     Private Function IsMyCard(sender As Object) As Card
-        Dim cards As List(Of Card) = debugGame.GetHand(debugGame.GetTurn)
+        Dim cards As List(Of Card) = debugGameModel.GetHand(debugGameModel.GetTurn)
         For Each card As Card In cards
             If card.GetView.Equals(sender) Then Return card
         Next
@@ -109,10 +109,10 @@
 
     Private Sub CardDClicked(sender As Object, e As System.EventArgs)
         Dim c As Card = IsMyCard(sender)
-        If Not IsNothing(c) Then debugGame.PlayCard(c)
+        If Not IsNothing(c) Then debugGameModel.PlayCard(c)
     End Sub
 
     Private Sub Skip()
-        debugGame.Skip()
+        debugGameModel.Skip()
     End Sub
 End Class
