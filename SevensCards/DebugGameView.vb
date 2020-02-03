@@ -49,28 +49,28 @@
     End Sub
 
     Public Sub DrawCardOnBoard(card As Card)
-        fp.objectHandler.AddObject(boardPanel, card.GetView, 20 + (card.GetSuit * (CARDHEIGHT + 10)),
-                                                   40 + (card.GetValue * (CARDWIDTH + 10)), CARDHEIGHT, CARDWIDTH, "")
-        card.Flip()
-        card.GetView.BorderStyle = BorderStyle.FixedSingle
+        Me.Invoke(Sub() fp.objectHandler.AddObject(boardPanel, card.GetView, 20 + (card.GetSuit * (CARDHEIGHT + 10)),
+                                                   40 + (card.GetValue * (CARDWIDTH + 10)), CARDHEIGHT, CARDWIDTH, ""))
+        Me.Invoke(Sub() card.Flip())
+        Me.Invoke(Sub() card.GetView.BorderStyle = BorderStyle.FixedSingle)
     End Sub
 
     Public Sub DrawCardOnHand(card As Card, player As Hand, i As Integer, turn As Integer)
-        fp.objectHandler.AddObject(handsPanel, card.GetView, 20 + (i * (CARDHEIGHT + 15)),
-                                                   40 + (player.GetHand.IndexOf(card) * (CARDWIDTH + 10)), CARDHEIGHT, CARDWIDTH, "")
-        fp.objectHandler.AddObject(handsPanel, card.GetValidBar, card.GetView.Top + CARDHEIGHT,
-                                   40 + (player.GetHand.IndexOf(card) * (CARDWIDTH + 10)), 5, CARDWIDTH, card.GetValid.ToString)
-        If i = turn Then card.Flip()
+        Me.Invoke(Sub() fp.objectHandler.AddObject(handsPanel, card.GetView, 20 + (i * (CARDHEIGHT + 15)),
+                                                   40 + (player.GetHand.IndexOf(card) * (CARDWIDTH + 10)), CARDHEIGHT, CARDWIDTH, ""))
+        Me.Invoke(Sub() fp.objectHandler.AddObject(handsPanel, card.GetValidBar, card.GetView.Top + CARDHEIGHT,
+                                   40 + (player.GetHand.IndexOf(card) * (CARDWIDTH + 10)), 5, CARDWIDTH, card.GetValid.ToString))
+        If i = turn Then Me.Invoke(Sub() card.Flip())
 
         AddHandler(card.GetView.MouseClick), AddressOf CardSClicked
         AddHandler(card.GetView.MouseDoubleClick), AddressOf CardDClicked
     End Sub
 
     Public Sub RemoveCardFromHand(hand As List(Of Card), card As Card)
-        card.GetValidBar.Invoke(Sub() Dispose())
+        Me.Invoke(Sub() card.GetValidBar.Dispose())
         For i As Integer = hand.IndexOf(card) To hand.Count - 1
-            hand(i).GetView.Left -= (CARDWIDTH + 10)
-            hand(i).GetValidBar.Left -= (CARDWIDTH + 10)
+            Me.Invoke(Sub() hand(i).GetView.Left -= (CARDWIDTH + 10))
+            Me.Invoke(Sub() hand(i).GetValidBar.Left -= (CARDWIDTH + 10))
         Next
     End Sub
 
@@ -81,8 +81,8 @@
         For Each card As Card In newHand
             card.Flip()
         Next
-        activePlayerPanel.Top += activePlayerPanel.Height + 15
-        If turn = 0 Then activePlayerPanel.Top = 20
+        Me.Invoke(Sub() activePlayerPanel.Top += activePlayerPanel.Height + 15)
+        If turn = 0 Then Me.Invoke(Sub() activePlayerPanel.Top = 20)
     End Sub
 
     Private Function IsMyCard(sender As Object) As Card

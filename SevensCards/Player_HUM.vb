@@ -1,6 +1,5 @@
 ﻿Public Class Player_HUM
     Inherits Player
-    Dim c As Card = Nothing
 
     Private Function GetPlayedCard_HUM() As Card
         While playedCard Is Nothing
@@ -10,6 +9,7 @@
 
     Public Overrides Sub GetMove()
         Dim card As Card = GetPlayedCard_HUM()
+        playedCard = Nothing
         callback(card)
     End Sub
 End Class

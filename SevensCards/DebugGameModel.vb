@@ -42,7 +42,6 @@
     Private Sub GameLoop()
         moveThread = New System.Threading.Thread(AddressOf players(turn).GetMove)
         moveThread.Start()
-
     End Sub
 
     Private Function GetCorrespondingCard(chosenCard As Card) As Card
@@ -56,7 +55,6 @@
     End Function
 
     Public Sub ResultCallback(chosenCard As Card)
-
         Dim card As Card = GetCorrespondingCard(chosenCard)
         Move(card)
     End Sub
@@ -100,8 +98,13 @@
     End Sub
 
     Public Sub Move(card As Card)
+        If card Is Nothing Then Exit Sub
+        If Not card.GetValid Then
+            GameLoop()
+            Exit Sub
+        End If
+
         Dim newTurn As Integer = GetNextPlayer()
-        If Not card.GetValid Then Exit Sub
         board.GetSuit(card.GetSuit).AddCard(card)
 
         debugGameView.RemoveCardFromHand(players(turn).GetHandCards, card)
@@ -116,5 +119,6 @@
         UpdateValidCards(card)
         turn = newTurn
 
+        GameLoop()
     End Sub
 End Class
