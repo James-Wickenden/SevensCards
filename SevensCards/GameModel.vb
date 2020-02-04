@@ -1,19 +1,21 @@
-﻿Public Class DebugGameModel
-    Private debugGameView As DebugGameView
+﻿Public Class GameModel
+    Private gameView As GameView
     Private turn As Integer = 1
     Private players(3) As Player
     Private board As New Board
     Private finishers As Integer = 0
     Private moveThread As Threading.Thread
+    Private mode As FunctionPool.Mode
 
-    Public Sub New(menu As Menu)
-        debugGameView = New DebugGameView()
-        debugGameView.SetDebugGameModel(Me)
-        debugGameView.Show()
+    Public Sub New(menu As Menu, mode As Integer)
+        Me.mode = mode
+        gameView = New GameView()
+        gameView.SetGameModel(Me)
+        gameView.Show()
         menu.Close()
 
         GameSetup()
-        debugGameView.DrawView(board, GetHands, turn)
+        gameView.DrawView(board, GetHands, turn)
         GameLoop()
     End Sub
 
@@ -22,7 +24,15 @@
         deck.ShuffleDeck()
 
         For i As Integer = 0 To 3
-            players(i) = New Player_COM()
+            Select Case mode
+                Case FunctionPool.Mode.OFFLINE
+                    If i = 0 Then players(i) = New Player_HUM
+                    If i > 0 Then players(i) = New Player_COM
+                Case FunctionPool.Mode.COM
+                    players(i) = New Player_COM
+                Case FunctionPool.Mode.HUM
+                    players(i) = New Player_HUM
+            End Select
             players(i).setCallback(AddressOf ResultCallback)
             Dim playerHand As New List(Of Card)
             For j As Integer = 0 To 11
@@ -44,6 +54,15 @@
     Public Sub ResultCallback(card As Card)
         Move(card)
     End Sub
+
+    Public Function GetModeString() As String
+        Select Case mode
+            Case FunctionPool.Mode.OFFLINE : Return "OFFLINE MATCH"
+            Case FunctionPool.Mode.COM : Return "COMPUTER MATCH"
+            Case FunctionPool.Mode.HUM : Return "HUMAN MATCH"
+            Case Else : Return "ONLINE"
+        End Select
+    End Function
 
     Private Function GetHands() As Hand()
         Dim hands As New List(Of Hand)
@@ -89,20 +108,20 @@
 
         If Not skipped Then
             board.GetSuit(card.GetSuit).AddCard(card)
-            debugGameView.RemoveCardFromHand(players(turn).GetHandCards, card)
-            debugGameView.DrawCardOnBoard(card)
+            gameView.RemoveCardFromHand(players(turn).GetHandCards, card)
+            gameView.DrawCardOnBoard(card)
             players(turn).GetHand.RemoveCard(card)
             UpdateValidCards(card)
         End If
 
-        debugGameView.ChangePlayer(players(turn).GetHandCards, players(newTurn).GetHandCards, newTurn)
+        gameView.ChangePlayer(players(turn).GetHandCards, players(newTurn).GetHandCards, newTurn)
 
         If players(turn).GetHandCards.Count = 0 Then
             finishers += 1
-            debugGameView.Finisher(finishers, turn)
+            gameView.Finisher(finishers, turn)
         End If
 
         turn = newTurn
-        GameLoop()
+        If finishers < 4 Then GameLoop()
     End Sub
 End Class

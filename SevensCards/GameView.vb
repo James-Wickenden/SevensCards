@@ -1,6 +1,6 @@
-﻿Public Class DebugGameView
+﻿Public Class GameView
     Private fp As New FunctionPool
-    Private debugGameModel As DebugGameModel
+    Private gameModel As GameModel
     Const CARDHEIGHT As Integer = 105
     Const CARDWIDTH As Integer = 70
     Private lastClicked As Object
@@ -8,8 +8,8 @@
     Private but_Skip As New Button
     Private placeLabels(3) As Label
 
-    Private Sub DebugGameView_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        fp.formSetup(Me)
+    Private Sub GameView_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        fp.FormSetup(Me, gameModel.GetModeString)
         PanelSetup()
     End Sub
 
@@ -23,8 +23,8 @@
         fp.objectHandler.AddButton(handsPanel, but_Skip, 20, ((CARDWIDTH + 10) * 12) + 40, 50, CARDWIDTH, "Skip", AddressOf Skip)
     End Sub
 
-    Public Sub SetDebugGameModel(debugGameModel As DebugGameModel)
-        Me.debugGameModel = debugGameModel
+    Public Sub SetGameModel(gameModel As GameModel)
+        Me.gameModel = gameModel
     End Sub
 
     Public Sub DrawView(board As Board, players() As Hand, turn As Integer)
@@ -38,14 +38,12 @@
         For i As Integer = 0 To 3
             For Each card As Card In players(i).GetHand
                 DrawCardOnHand(card, players(i), i, turn)
-
             Next
         Next
 
         Dim top As Integer = ((CARDHEIGHT + 15) * turn) + 20
         fp.objectHandler.AddObject(handsPanel, activePlayerPanel, top, 0, CARDHEIGHT, 20, "")
         activePlayerPanel.BackColor = Color.Red
-
     End Sub
 
     Public Sub DrawCardOnBoard(card As Card)
@@ -70,8 +68,9 @@
         Me.Invoke(Sub() card.GetValidBar.Dispose())
         If Not hand.Contains(card) Then Exit Sub
         For i As Integer = hand.IndexOf(card) To hand.Count - 1
-            Me.Invoke(Sub() hand(i).GetView.Left -= (CARDWIDTH + 10))
-            Me.Invoke(Sub() hand(i).GetValidBar.Left -= (CARDWIDTH + 10))
+            Dim temp As Integer = i
+            Me.Invoke(Sub() hand(temp).GetView.Left -= (CARDWIDTH + 10))
+            Me.Invoke(Sub() hand(temp).GetValidBar.Left -= (CARDWIDTH + 10))
         Next
     End Sub
 
@@ -87,7 +86,7 @@
     End Sub
 
     Private Function IsMyCard(sender As Object) As Card
-        Dim cards As List(Of Card) = debugGameModel.GetHand(debugGameModel.GetTurn)
+        Dim cards As List(Of Card) = gameModel.GetHand(gameModel.GetTurn)
         For Each card As Card In cards
             If card.GetView.Equals(sender) Then Return card
         Next
@@ -95,9 +94,9 @@
     End Function
 
     Public Sub Finisher(ByVal place As Integer, ByVal turn As Integer)
-        If place = 4 Then but_Skip.Dispose()
+        If place = 4 Then Me.Invoke(Sub() but_Skip.Dispose())
         placeLabels(place - 1) = New Label
-        fp.objectHandler.AddObject(handsPanel, placeLabels(place - 1), 20 + (turn * (CARDHEIGHT + 15)), 40, CARDHEIGHT, CARDWIDTH, place)
+        Me.Invoke(Sub() fp.objectHandler.AddObject(handsPanel, placeLabels(place - 1), 20 + (turn * (CARDHEIGHT + 15)), 40, CARDHEIGHT, CARDWIDTH, place))
         placeLabels(place - 1).Font = New Font("Arial", 40)
     End Sub
 
@@ -111,11 +110,11 @@
     Private Sub CardDClicked(sender As Object, e As System.EventArgs)
         Dim c As Card = IsMyCard(sender)
         If Not IsNothing(c) Then
-            If c.GetValid Then debugGameModel.PlayCard(c)
+            If c.GetValid Then gameModel.PlayCard(c)
         End If
     End Sub
 
     Private Sub Skip()
-        debugGameModel.Skip()
+        gameModel.Skip()
     End Sub
 End Class

@@ -1,8 +1,12 @@
 ﻿Public Class TODO
     'TODO:
-    '   Make players a class with human and COM inheritors
-    '   Implement networking and refactor for decentralised hands
-    '   Move view into dedicated thread!
+    '   Implement networking
     '   Game loading bar
-    '   FIX SKIP BREAKING THREADING
+    '   Implement COM difficulty AI.
+    '   Implement log for tracking/ online debugging
+
+    'BUGS:
+    '   Can crash when exiting on a COM move
+    '       This is likely due to the main thread closing and the COM move thread trying to invoke it.
+    '   
 End Class

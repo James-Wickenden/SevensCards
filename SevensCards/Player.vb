@@ -1,7 +1,7 @@
 ﻿Public MustInherit Class Player
     Protected playedCard As Card = Nothing
     Protected hand As Hand
-    Protected view As DebugGameView
+    Protected view As GameView
     Protected callback As FunctionPool.moveToBeMade
     Protected skipMove As Boolean = False
     Protected isMyMove As Boolean = False
