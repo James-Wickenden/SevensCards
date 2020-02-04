@@ -2,8 +2,8 @@
     'TODO:
     '   Implement networking
     '   Game loading bar
-    '   Implement COM difficulty AI.
-    '   Implement log for tracking/ online debugging
+    '   Implement COM difficulty AI {in progress}
+    '   Implement console/log for tracking/ online debugging
 
     'BUGS:
     '   Can crash when exiting on a COM move
