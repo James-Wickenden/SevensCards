@@ -12,10 +12,11 @@
     Private Function GetPlayedCard_COM() As Card
         For Each card As Card In hand.GetHand
             If card.GetValid Then
-                Threading.Thread.Sleep(1)
+                Threading.Thread.Sleep(300)
                 Return card
             End If
         Next
+        Threading.Thread.Sleep(300)
         Return Nothing
     End Function
 

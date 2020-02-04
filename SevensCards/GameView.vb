@@ -27,7 +27,7 @@
         Me.gameModel = gameModel
     End Sub
 
-    Public Sub DrawView(board As Board, players() As Hand, turn As Integer)
+    Public Sub DrawView(board As Board, players() As Player, turn As Integer, mode As FunctionPool.Mode)
 
         For i As Integer = 0 To 3
             For Each card As Card In board.GetSuit(i).GetHand
@@ -36,12 +36,12 @@
         Next
 
         For i As Integer = 0 To 3
-            For Each card As Card In players(i).GetHand
-                DrawCardOnHand(card, players(i), i, turn)
+            For Each card As Card In players(i).GetHandCards
+                DrawCardOnHand(card, players(i), i, turn, mode)
             Next
         Next
 
-        Dim top As Integer = ((CARDHEIGHT + 15) * turn) + 20
+        Dim top As Integer = CalculateAPTop(turn)
         fp.objectHandler.AddObject(handsPanel, activePlayerPanel, top, 0, CARDHEIGHT, 20, "")
         activePlayerPanel.BackColor = Color.Red
     End Sub
@@ -49,16 +49,18 @@
     Public Sub DrawCardOnBoard(card As Card)
         Me.Invoke(Sub() fp.objectHandler.AddObject(boardPanel, card.GetView, 20 + (card.GetSuit * (CARDHEIGHT + 10)),
                                                    40 + (card.GetValue * (CARDWIDTH + 10)), CARDHEIGHT, CARDWIDTH, ""))
-        If card.GetValue = CardEnums.Value.SEVEN Then Me.Invoke(Sub() card.Flip())
+        card.SetFaceUp()
         Me.Invoke(Sub() card.GetView.BorderStyle = BorderStyle.FixedSingle)
     End Sub
 
-    Public Sub DrawCardOnHand(card As Card, player As Hand, i As Integer, turn As Integer)
+    Public Sub DrawCardOnHand(card As Card, player As Player, i As Integer, turn As Integer, mode As FunctionPool.Mode)
+
         Me.Invoke(Sub() fp.objectHandler.AddObject(handsPanel, card.GetView, 20 + (i * (CARDHEIGHT + 15)),
-                                                   40 + (player.GetHand.IndexOf(card) * (CARDWIDTH + 10)), CARDHEIGHT, CARDWIDTH, ""))
+                                                   40 + (player.GetHandCards.IndexOf(card) * (CARDWIDTH + 10)), CARDHEIGHT, CARDWIDTH, ""))
         Me.Invoke(Sub() fp.objectHandler.AddObject(handsPanel, card.GetValidBar, card.GetView.Top + CARDHEIGHT,
-                                   40 + (player.GetHand.IndexOf(card) * (CARDWIDTH + 10)), 5, CARDWIDTH, card.GetValid.ToString))
-        If i = turn Then Me.Invoke(Sub() card.Flip())
+                                   40 + (player.GetHandCards.IndexOf(card) * (CARDWIDTH + 10)), 5, CARDWIDTH, card.GetValid.ToString))
+
+        If (i = turn And mode = FunctionPool.Mode.HUM) Or (player.GetCanSeeHand And mode <> FunctionPool.Mode.HUM) Then Me.Invoke(Sub() card.SetFaceUp())
 
         AddHandler(card.GetView.MouseClick), AddressOf CardSClicked
         AddHandler(card.GetView.MouseDoubleClick), AddressOf CardDClicked
@@ -74,15 +76,18 @@
         Next
     End Sub
 
-    Public Sub ChangePlayer(oldHand As List(Of Card), newHand As List(Of Card), turn As Integer)
+    Private Function CalculateAPTop(turn As Integer) As Integer
+        Return ((CARDHEIGHT + 15) * turn) + 20
+    End Function
+
+    Public Sub ChangePlayer(oldHand As List(Of Card), newHand As List(Of Card), turn As Integer, isOldHandVisible As Boolean, isNewHandVisible As Boolean)
         For Each card As Card In oldHand
-            card.Flip()
+            card.CardUpDown(isOldHandVisible)
         Next
         For Each card As Card In newHand
-            card.Flip()
+            card.CardUpDown(isNewHandVisible)
         Next
-        Me.Invoke(Sub() activePlayerPanel.Top += activePlayerPanel.Height + 15)
-        If turn = 0 Then Me.Invoke(Sub() activePlayerPanel.Top = 20)
+        Me.Invoke(Sub() activePlayerPanel.Top = CalculateAPTop(turn))
     End Sub
 
     Private Function IsMyCard(sender As Object) As Card

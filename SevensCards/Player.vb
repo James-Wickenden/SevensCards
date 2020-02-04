@@ -1,6 +1,8 @@
 ﻿Public MustInherit Class Player
     Protected playedCard As Card = Nothing
     Protected hand As Hand
+    Protected canSeeHand As Boolean = False
+
     Protected view As GameView
     Protected callback As FunctionPool.moveToBeMade
     Protected skipMove As Boolean = False
@@ -15,6 +17,13 @@
         Me.isMyMove = isMyMove
     End Sub
 
+    Public Function GetCanSeeHand() As Boolean
+        Return canSeeHand
+    End Function
+    Public Sub SetCanSeeHand(canSeeHand As Boolean)
+        Me.canSeeHand = canSeeHand
+    End Sub
+
     Public Function GetHand() As Hand
         Return hand
     End Function
@@ -22,7 +31,7 @@
         Me.hand = hand
     End Sub
 
-    Public Sub setCallback(callbackDelegate As FunctionPool.moveToBeMade)
+    Public Sub SetCallback(callbackDelegate As FunctionPool.moveToBeMade)
         callback = callbackDelegate
     End Sub
     Public Sub SetPlayedCard(playedCard As Card)

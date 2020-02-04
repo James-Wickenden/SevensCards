@@ -49,10 +49,10 @@
     Public Function GetValidBar() As Panel
         Return validBar
     End Function
-    Public Function GetadjCard() As Card
+    Public Function GetAdjCard() As Card
         Return adjCard
     End Function
-    Public Sub SetadjCard(c As Card)
+    Public Sub SetAdjCard(c As Card)
         adjCard = c
     End Sub
 
@@ -75,7 +75,7 @@
         Return res
     End Function
 
-    Public Sub Flip()
+    Private Sub Flip()
         If faceUp Then
             faceUp = False
             view.BackgroundImage = backImg
@@ -86,7 +86,23 @@
             If valid Then validBar.BackColor = Color.Green
             If Not valid Then validBar.BackColor = Color.Red
         End If
+    End Sub
 
+    Public Sub SetFaceDown()
+        If Not faceUp Then Exit Sub
+        Flip()
+    End Sub
+
+    Public Sub SetFaceUp()
+        If faceUp Then Exit Sub
+        Flip()
+    End Sub
+
+    Public Sub CardUpDown(setUp As Boolean)
+        Select Case setUp
+            Case True : SetFaceUp()
+            Case False : SetFaceDown()
+        End Select
     End Sub
 
     Private Function Compare(x As Card) As Integer

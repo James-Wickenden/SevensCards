@@ -15,7 +15,7 @@
         menu.Close()
 
         GameSetup()
-        gameView.DrawView(board, GetHands, turn)
+        gameView.DrawView(board, players, turn, mode)
         GameLoop()
     End Sub
 
@@ -30,6 +30,7 @@
                     If i > 0 Then players(i) = New Player_COM
                 Case FunctionPool.Mode.COM
                     players(i) = New Player_COM
+                    players(i).SetCanSeeHand(True)
                 Case FunctionPool.Mode.HUM
                     players(i) = New Player_HUM
             End Select
@@ -62,14 +63,6 @@
             Case FunctionPool.Mode.HUM : Return "HUMAN MATCH"
             Case Else : Return "ONLINE"
         End Select
-    End Function
-
-    Private Function GetHands() As Hand()
-        Dim hands As New List(Of Hand)
-        For i As Integer = 0 To 3
-            hands.Add(players(i).GetHand)
-        Next
-        Return hands.ToArray
     End Function
 
     Private Sub UpdateValidCards(card As Card)
@@ -114,7 +107,11 @@
             UpdateValidCards(card)
         End If
 
-        gameView.ChangePlayer(players(turn).GetHandCards, players(newTurn).GetHandCards, newTurn)
+        Dim isOldHandVisible As Boolean = players(turn).GetCanSeeHand
+        Dim isNewHandVisible As Boolean = players(newTurn).GetCanSeeHand
+        If mode = FunctionPool.Mode.HUM Then isOldHandVisible = False
+
+        gameView.ChangePlayer(players(turn).GetHandCards, players(newTurn).GetHandCards, newTurn, isOldHandVisible, isNewHandVisible)
 
         If players(turn).GetHandCards.Count = 0 Then
             finishers += 1

@@ -1,6 +1,10 @@
 ﻿Public Class Player_HUM
     Inherits Player
 
+    Public Sub New()
+        canSeeHand = True
+    End Sub
+
     Private Function GetPlayedCard_HUM() As Card
         While Not isMyMove
         End While
