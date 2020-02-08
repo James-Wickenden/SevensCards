@@ -3,7 +3,7 @@
     'Difficulty 0: The COM plays whatever valid card it comes across first.
     'Difficulty 1: The COM weighs cards towards the extremities more heavily, and plays to get rid of them above more central plays. 
     'Difficulty 2: The COM weighs cards like mode 1, but also weighs how many cards it can play towards one extremity and plays to that first.
-    Private difficulty As Integer = 0
+    Private difficulty As Integer = 1
 
     Public Sub SetDifficulty(difficulty As Integer)
         Me.difficulty = difficulty
@@ -28,7 +28,22 @@
     End Function
 
     Private Function PickCard_1() As Card
+        Dim validCards() As Card = GetValidCards()
+        If validCards.Length = 0 Then Return Nothing
 
+        Dim bestWeight As Integer = 0
+        Dim bestWeights As New List(Of Card)
+        Dim weight As Integer
+        For i As Integer = 0 To validCards.Length - 1
+            weight = Math.Abs(validCards(i).GetValue - CardEnums.Value.SEVEN)
+            If weight > bestWeight Then bestWeight = weight
+        Next
+        For i As Integer = 0 To validCards.Length - 1
+            weight = Math.Abs(validCards(i).GetValue - CardEnums.Value.SEVEN)
+            If weight = bestWeight Then bestWeights.Add(validCards(i))
+        Next
+
+        Return bestWeights(Int((bestWeights.Count) * Rnd()))
     End Function
 
     Private Function PickCard_2() As Card

@@ -119,6 +119,6 @@
         End If
 
         turn = newTurn
-        If finishers < 4 Then GameLoop()
+        If finishers < 3 Then GameLoop()
     End Sub
 End Class
