@@ -1,5 +1,5 @@
 ﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
-Partial Class DebugGameView
+Partial Class GameView
     Inherits System.Windows.Forms.Form
 
     'Form overrides dispose to clean up the component list.
@@ -24,13 +24,13 @@ Partial Class DebugGameView
     Private Sub InitializeComponent()
         Me.SuspendLayout()
         '
-        'DebugGameView
+        'GameView
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(284, 261)
-        Me.Name = "DebugGameView"
-        Me.Text = "DebugGameView"
+        Me.Name = "GameView"
+        Me.Text = "GameView"
         Me.ResumeLayout(False)
 
     End Sub

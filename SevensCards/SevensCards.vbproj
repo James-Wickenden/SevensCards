@@ -74,11 +74,11 @@
     <Compile Include="Board.vb" />
     <Compile Include="Card.vb" />
     <Compile Include="CardEnums.vb" />
-    <Compile Include="DebugGameModel.vb" />
-    <Compile Include="DebugGameView.Designer.vb">
-      <DependentUpon>DebugGameView.vb</DependentUpon>
+    <Compile Include="GameModel.vb" />
+    <Compile Include="GameView.Designer.vb">
+      <DependentUpon>GameView.vb</DependentUpon>
     </Compile>
-    <Compile Include="DebugGameView.vb">
+    <Compile Include="GameView.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Deck.vb" />
@@ -106,10 +106,14 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="objectHandler.vb" />
+    <Compile Include="Player_COM.vb" />
+    <Compile Include="Player_HUM.vb" />
+    <Compile Include="Player_WEB.vb" />
+    <Compile Include="TODO.vb" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="DebugGameView.resx">
-      <DependentUpon>DebugGameView.vb</DependentUpon>
+    <EmbeddedResource Include="GameView.resx">
+      <DependentUpon>GameView.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Menu.resx">
       <DependentUpon>Menu.vb</DependentUpon>
