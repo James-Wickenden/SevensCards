@@ -3,7 +3,7 @@
     'Difficulty 0: The COM plays whatever valid card it comes across first.
     'Difficulty 1: The COM weighs cards towards the extremities more heavily, and plays to get rid of them above more central plays. 
     'Difficulty 2: The COM weighs cards like mode 1, but also weighs how many cards it can play towards one extremity and plays to that first.
-    Private difficulty As Integer = 1
+    Private difficulty As Integer = 2
 
     Public Sub SetDifficulty(difficulty As Integer)
         Me.difficulty = difficulty
@@ -47,7 +47,34 @@
     End Function
 
     Private Function PickCard_2() As Card
+        Dim validCards() As Card = GetValidCards()
+        If validCards.Length = 0 Then Return Nothing
 
+        Dim gapToNextCard(validCards.Length - 1), weights(validCards.Length - 1) As Integer
+        Dim bestWeightIndex, bestWeight As Integer
+        For i As Integer = 0 To validCards.Length - 1
+            weights(i) = Math.Abs(validCards(i).GetValue - CardEnums.Value.SEVEN) + 2
+
+            gapToNextCard(i) = -1
+            For Each card As Card In hand.GetHand
+                If (validCards(i).GetSuit = card.GetSuit) And (validCards(i).GetValue <> card.GetValue) Then
+                    Dim cardDist As Integer = Math.Abs(validCards(i).GetValue - card.GetValue)
+                    Dim validPairing As Boolean = False
+
+                    If (validCards(i).GetValue < CardEnums.Value.SEVEN) And (card.GetValue < CardEnums.Value.SEVEN) Then validPairing = True
+                    If (validCards(i).GetValue > CardEnums.Value.SEVEN) And (card.GetValue > CardEnums.Value.SEVEN) Then validPairing = True
+
+                    If validPairing And (cardDist > gapToNextCard(i)) Then gapToNextCard(i) = cardDist
+                End If
+            Next
+            weights(i) *= (gapToNextCard(i) + 2)
+            If weights(i) > bestWeight Then
+                bestWeightIndex = i
+                bestWeight = weights(i)
+            End If
+        Next
+
+        Return validCards(bestWeightIndex)
     End Function
 
     Private Function GetPlayedCard_COM() As Card

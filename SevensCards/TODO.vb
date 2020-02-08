@@ -2,9 +2,8 @@
     'TODO:
     '   Implement networking
     '   Game loading bar
-    '   Implement COM difficulty AI {in progress}
     '   Implement console/log for tracking/ online debugging
 
     'BUGS:
-    '   
+    '   Freezing while loading/ solve with loading bar?
 End Class
