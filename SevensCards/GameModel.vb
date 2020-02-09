@@ -1,11 +1,18 @@
-﻿Public Class GameModel
+﻿Imports System.Net
+Imports System.Threading
+
+Public Class GameModel
     Private gameView As GameView
     Private turn As Integer = 1
     Private players(3) As Player
     Private board As New Board
     Private finishers As Integer = 0
-    Private moveThread As Threading.Thread
+    Private moveThread, listThread As Threading.Thread
     Private mode As FunctionPool.Mode
+
+    Private localAddr As IPAddress = IPAddress.Parse("127.0.0.1")
+    Private listener As New Sockets.TcpListener(localAddr, 65535)
+    Private client As New Sockets.TcpClient
 
     Public Sub New(menu As Menu, mode As Integer)
         Me.mode = mode
@@ -14,6 +21,10 @@
         gameView.Show()
         menu.Close()
 
+        If Me.mode = FunctionPool.Mode.ONLINE Then
+            listThread = New Thread(AddressOf Listening)
+            listThread.Start()
+        End If
         GameSetup()
         gameView.DrawView(board, players, turn, mode)
         GameLoop()
@@ -33,8 +44,12 @@
                     players(i).SetCanSeeHand(True)
                 Case FunctionPool.Mode.HUM
                     players(i) = New Player_HUM
+                Case FunctionPool.Mode.ONLINE
+                    If i = 0 Then players(i) = New Player_HUM
+                    If i = 1 Then players(i) = New Player_COM
+                    If i > 1 Then players(i) = New Player_COM
             End Select
-            players(i).setCallback(AddressOf ResultCallback)
+            players(i).SetCallback(AddressOf ResultCallback)
             Dim playerHand As New List(Of Card)
             For j As Integer = 0 To 11
                 playerHand.Add(deck.GetCard((12 * i) + j))
@@ -47,9 +62,35 @@
     End Sub
 
     Private Sub GameLoop()
-        moveThread = New System.Threading.Thread(AddressOf players(turn).GetMove)
+        moveThread = New Thread(AddressOf players(turn).GetMove)
         moveThread.Start()
         players(turn).SetIsMyMove(True)
+    End Sub
+
+    Public Sub GameClose()
+        listThread.Abort()
+        Listener.Stop()
+        End
+    End Sub
+
+    Private Sub Listening()
+        Listener.Start()
+        Dim message As String = ""
+
+        Do
+            If Listener.Pending = True Then
+                message = ""
+                Client = Listener.AcceptTcpClient()
+
+                Dim Reader As New IO.StreamReader(Client.GetStream())
+
+                While Reader.Peek > -1
+                    message &= Convert.ToChar(Reader.Read()).ToString
+                End While
+
+                MsgBox(message, MsgBoxStyle.OkOnly)
+            End If
+        Loop
     End Sub
 
     Public Sub ResultCallback(card As Card)
@@ -66,7 +107,7 @@
     End Function
 
     Private Sub UpdateValidCards(card As Card)
-        If card.GetValue <> CardEnums.Value.KING And card.GetValue <> CardEnums.Value.ACE Then card.GetadjCard.SetValid(True)
+        If card.GetValue <> CardEnums.Value.KING And card.GetValue <> CardEnums.Value.ACE Then card.GetAdjCard.SetValid(True)
     End Sub
 
     Public Function GetHand(index As Integer) As List(Of Card)
@@ -78,7 +119,7 @@
     End Function
 
     Public Sub Skip()
-        players(turn).skip()
+        players(turn).Skip()
     End Sub
 
     Private Function GetNextPlayer() As Integer
@@ -118,7 +159,15 @@
             gameView.Finisher(finishers, turn)
         End If
 
+        If mode = FunctionPool.Mode.ONLINE Then
+            Client = New Sockets.TcpClient("127.0.0.1", 65535)
+            Dim Writer As New IO.StreamWriter(Client.GetStream())
+            Writer.Write(turn & " " & card.GetCardText)
+            Writer.Flush()
+        End If
+
         turn = newTurn
+
         If finishers < 4 Then GameLoop()
     End Sub
 End Class

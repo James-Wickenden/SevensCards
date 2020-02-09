@@ -13,6 +13,10 @@
         PanelSetup()
     End Sub
 
+    Private Sub GameView_Close(ByVal sender As Object, ByVal e As FormClosingEventArgs) Handles Me.FormClosing
+        gameModel.GameClose()
+    End Sub
+
     Private Sub PanelSetup()
         fp.objectHandler.AddObject(Me, boardPanel, 0, 0, ((CARDHEIGHT + 10) * 4) + 30, ((CARDWIDTH + 10) * 13) + 50, "")
         boardPanel.BackColor = Color.DarkGreen
