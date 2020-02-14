@@ -105,4 +105,12 @@
         End Try
 
     End Sub
+
+    Public Overrides Sub KillListener()
+        Throw New NotImplementedException()
+    End Sub
+
+    Public Overrides Sub SendMove(card As Card, turn As Integer)
+        Throw New NotImplementedException()
+    End Sub
 End Class

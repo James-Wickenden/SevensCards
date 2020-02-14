@@ -8,6 +8,8 @@
     Protected skipMove As Boolean = False
     Protected isMyMove As Boolean = False
     Public MustOverride Sub GetMove()
+    Public MustOverride Sub KillListener()
+    Public MustOverride Sub SendMove(card As Card, turn As Integer)
 
     Public Sub Skip()
         skipMove = True
