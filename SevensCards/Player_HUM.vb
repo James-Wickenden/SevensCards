@@ -24,4 +24,11 @@
         playedCard = Nothing
         callback(card)
     End Sub
+
+    Public Overrides Sub KillListener()
+    End Sub
+
+    Public Overrides Sub SendMove(card As Card, turn As Integer)
+        Throw New NotImplementedException()
+    End Sub
 End Class

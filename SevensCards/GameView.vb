@@ -13,6 +13,10 @@
         PanelSetup()
     End Sub
 
+    Private Sub GameView_Close(ByVal sender As Object, ByVal e As FormClosingEventArgs) Handles Me.FormClosing
+        gameModel.GameClose()
+    End Sub
+
     Private Sub PanelSetup()
         fp.objectHandler.AddObject(Me, boardPanel, 0, 0, ((CARDHEIGHT + 10) * 4) + 30, ((CARDWIDTH + 10) * 13) + 50, "")
         boardPanel.BackColor = Color.DarkGreen
@@ -21,6 +25,10 @@
         handsPanel.BackColor = Color.BurlyWood
 
         fp.objectHandler.AddButton(handsPanel, but_Skip, 20, ((CARDWIDTH + 10) * 12) + 40, 50, CARDWIDTH, "Skip", AddressOf Skip)
+    End Sub
+
+    Public Sub KillSkip()
+        but_Skip.Dispose()
     End Sub
 
     Public Sub SetGameModel(gameModel As GameModel)
