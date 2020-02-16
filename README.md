@@ -18,6 +18,8 @@ TODO:
 - Implement networking
 - Game loading bar
 - Implement console/log for tracking/ online debugging
+- Implement difficulty slider for COM players
+- Clean up GameModel & GameView interfaces
 
 BUGS:
 

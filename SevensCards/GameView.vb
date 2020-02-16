@@ -27,6 +27,10 @@
         fp.objectHandler.AddButton(handsPanel, but_Skip, 20, ((CARDWIDTH + 10) * 12) + 40, 50, CARDWIDTH, "Skip", AddressOf Skip)
     End Sub
 
+    Public Sub KillSkip()
+        but_Skip.Dispose()
+    End Sub
+
     Public Sub SetGameModel(gameModel As GameModel)
         Me.gameModel = gameModel
     End Sub

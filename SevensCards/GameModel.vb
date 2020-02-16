@@ -34,6 +34,7 @@ Public Class GameModel
                 Case FunctionPool.Mode.COM
                     players(i) = New Player_COM
                     players(i).SetCanSeeHand(True)
+                    gameView.KillSkip()
                 Case FunctionPool.Mode.HUM
                     players(i) = New Player_HUM
                 Case FunctionPool.Mode.ONLINE
