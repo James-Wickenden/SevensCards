@@ -125,7 +125,6 @@
     <Compile Include="Player_COM.vb" />
     <Compile Include="Player_HUM.vb" />
     <Compile Include="Player_WEB.vb" />
-    <Compile Include="TODO.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="GameView.resx">
