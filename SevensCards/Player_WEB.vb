@@ -50,7 +50,9 @@ Public Class Player_WEB
         client = New Sockets.TcpClient(WEB_Addr, 65535)
 
         Dim Writer As New IO.StreamWriter(client.GetStream())
-        Writer.Write(turn & " " & card.GetCardText)
+        Dim cardStr As String = "P"
+        If card IsNot Nothing Then cardStr = card.GetCardText
+        Writer.Write(turn & " " & cardStr)
         Writer.Flush()
     End Sub
 End Class
