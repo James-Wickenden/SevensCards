@@ -125,6 +125,8 @@ Public Class GameModel
         Dim skipped As Boolean = False
         If card Is Nothing Then skipped = True
 
+        Dim moveStr As String = ""
+        Dim finisherStr As String = ""
         Dim newTurn As Integer = GetNextPlayer()
 
         If Not skipped Then
@@ -143,10 +145,12 @@ Public Class GameModel
 
         If players(turn).GetHandCards.Count = 0 Then
             finishers += 1
+            finisherStr = "   Player " & turn & " finishes in position " & finishers & "!"
+            If finishers = 4 Then finisherStr &= vbCrLf & vbCrLf & "    GAME OVER!"
             gameView.Finisher(finishers, turn)
-        End If
+            End If
 
-        If mode = FunctionPool.Mode.ONLINE Then
+            If mode = FunctionPool.Mode.ONLINE Then
             For Each player As Player In players
                 If player.GetType = GetType(Player_WEB) Then
                     player.SendMove(card, turn)
@@ -156,9 +160,11 @@ Public Class GameModel
 
         Dim cardStr As String = "PASS"
         If card IsNot Nothing Then cardStr = card.GetCardText
-        Dim moveStr As String = "Player " & turn & " plays " & cardStr
+        moveStr = "Player " & turn & " plays " & cardStr
         If turn >= newTurn Then moveStr &= vbCrLf
+
         gameView.WriteToLog(moveStr)
+        If finisherStr <> "" Then gameView.WriteToLog(finisherStr)
 
         turn = newTurn
 
