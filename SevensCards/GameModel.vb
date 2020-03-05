@@ -9,6 +9,7 @@ Public Class GameModel
     Private finishers As Integer = 0
     Private moveThread As Threading.Thread
     Private mode As FunctionPool.Mode
+    Private AI_difficulty As Integer = 2
 
     Public Sub New(menu As Menu, mode As Integer)
         Me.mode = mode
@@ -30,9 +31,9 @@ Public Class GameModel
             Select Case mode
                 Case FunctionPool.Mode.OFFLINE
                     If i = 0 Then players(i) = New Player_HUM
-                    If i > 0 Then players(i) = New Player_COM
+                    If i > 0 Then players(i) = New Player_COM(AI_difficulty)
                 Case FunctionPool.Mode.COM
-                    players(i) = New Player_COM
+                    players(i) = New Player_COM(AI_difficulty)
                     players(i).SetCanSeeHand(True)
                     gameView.KillSkip()
                 Case FunctionPool.Mode.HUM
@@ -40,7 +41,7 @@ Public Class GameModel
                 Case FunctionPool.Mode.ONLINE
                     If i = 0 Then players(i) = New Player_HUM
                     If i = 1 Then players(i) = New Player_WEB
-                    If i > 1 Then players(i) = New Player_COM
+                    If i > 1 Then players(i) = New Player_COM(AI_difficulty)
             End Select
             players(i).SetCallback(AddressOf ResultCallback)
             Dim playerHand As New List(Of Card)
@@ -52,6 +53,18 @@ Public Class GameModel
         Next
         Randomize()
         turn = Int((4) * Rnd())
+
+        Dim gameStr As String = "Started new game: "
+        Select Case mode
+            Case FunctionPool.Mode.OFFLINE : gameStr &= "OFFLINE"
+            Case FunctionPool.Mode.COM : gameStr &= "COMS"
+            Case FunctionPool.Mode.HUM : gameStr &= "HUMANS"
+            Case FunctionPool.Mode.ONLINE : gameStr &= "ONLINE"
+        End Select
+        If mode = FunctionPool.Mode.COM Or mode = FunctionPool.Mode.OFFLINE Then gameStr &= vbCrLf & " -AI Difficulty is set to " & AI_difficulty
+        gameStr &= vbCrLf & " -Player " & turn & " begins." & vbCrLf
+
+        gameView.WriteToLog(gameStr)
     End Sub
 
     Private Sub GameLoop()
@@ -140,6 +153,12 @@ Public Class GameModel
                 End If
             Next
         End If
+
+        Dim cardStr As String = "PASS"
+        If card IsNot Nothing Then cardStr = card.GetCardText
+        Dim moveStr As String = "Player " & turn & " plays " & cardStr
+        If turn >= newTurn Then moveStr &= vbCrLf
+        gameView.WriteToLog(moveStr)
 
         turn = newTurn
 

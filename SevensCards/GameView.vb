@@ -33,13 +33,23 @@
     End Sub
 
     Private Sub LogSetup()
-        fp.objectHandler.AddObject(logPanel, gameLog, 0, 0, logPanel.Height - 40, logPanel.Width - 15, "log")
+        fp.objectHandler.AddObject(logPanel, gameLog, 0, 0, logPanel.Height - 40, logPanel.Width - 15, ">")
 
         gameLog.Multiline = True
         gameLog.ReadOnly = True
+        gameLog.ScrollBars = ScrollBars.Vertical
         gameLog.BackColor = Color.Black
         gameLog.ForeColor = Color.White
         gameLog.Font = New Font("Courier New", 15)
+    End Sub
+
+    Public Sub WriteToLog(str As String)
+        Me.Invoke(Sub()
+                      gameLog.Text = gameLog.Text.Remove(gameLog.Text.Count - 1)
+                      gameLog.Text &= " " & str & vbCrLf & ">"
+                      gameLog.SelectionStart = gameLog.Text.Length - 1
+                      gameLog.ScrollToCaret()
+                  End Sub)
     End Sub
 
     Public Sub KillSkip()
