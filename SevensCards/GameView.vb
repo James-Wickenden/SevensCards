@@ -4,7 +4,8 @@
     Const CARDHEIGHT As Integer = 105
     Const CARDWIDTH As Integer = 70
     Private lastClicked As Object
-    Private boardPanel, handsPanel, activePlayerPanel As New Panel
+    Private boardPanel, handsPanel, activePlayerPanel, logPanel As New Panel
+    Private gameLog As New TextBox
     Private but_Skip As New Button
     Private placeLabels(3) As Label
 
@@ -20,11 +21,25 @@
     Private Sub PanelSetup()
         fp.objectHandler.AddObject(Me, boardPanel, 0, 0, ((CARDHEIGHT + 10) * 4) + 30, ((CARDWIDTH + 10) * 13) + 50, "")
         boardPanel.BackColor = Color.DarkGreen
+
         fp.objectHandler.AddObject(Me, handsPanel, boardPanel.Height, 0, ((CARDHEIGHT + 4) * 10) + 20, boardPanel.Width, "")
         handsPanel.Height = Me.Height - handsPanel.Top
         handsPanel.BackColor = Color.BurlyWood
 
+        fp.objectHandler.AddObject(Me, logPanel, 0, boardPanel.Width, Me.Height, (Me.Width - boardPanel.Width), "")
+        LogSetup()
+
         fp.objectHandler.AddButton(handsPanel, but_Skip, 20, ((CARDWIDTH + 10) * 12) + 40, 50, CARDWIDTH, "Skip", AddressOf Skip)
+    End Sub
+
+    Private Sub LogSetup()
+        fp.objectHandler.AddObject(logPanel, gameLog, 0, 0, logPanel.Height - 40, logPanel.Width - 15, "log")
+
+        gameLog.Multiline = True
+        gameLog.ReadOnly = True
+        gameLog.BackColor = Color.Black
+        gameLog.ForeColor = Color.White
+        gameLog.Font = New Font("Courier New", 15)
     End Sub
 
     Public Sub KillSkip()
