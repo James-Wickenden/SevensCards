@@ -64,6 +64,13 @@ Public Class GameModel
         If mode = FunctionPool.Mode.COM Or mode = FunctionPool.Mode.OFFLINE Then gameStr &= vbCrLf & " -AI Difficulty is set to " & AI_difficulty
         gameStr &= vbCrLf & " -Player " & turn & " begins." & vbCrLf
 
+        If mode = FunctionPool.Mode.ONLINE Then
+            Dim hostName = Dns.GetHostName()
+            For Each hostAdr As IPAddress In Dns.GetHostEntry(hostName).AddressList()
+                gameStr &= vbCrLf & "Name: " & hostName & " IP Address: " & hostAdr.ToString()
+            Next
+        End If
+
         gameView.WriteToLog(gameStr)
     End Sub
 
