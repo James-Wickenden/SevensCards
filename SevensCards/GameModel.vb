@@ -66,7 +66,8 @@ Public Class GameModel
 
         If mode = FunctionPool.Mode.ONLINE Then
             Dim hostName = Dns.GetHostName()
-            For Each hostAdr As IPAddress In Dns.GetHostEntry(hostName).AddressList()
+            Dim addresses As IPAddress() = Dns.GetHostEntry(hostName).AddressList()
+            For Each hostAdr As IPAddress In addresses
                 gameStr &= vbCrLf & "Name: " & hostName & " IP Address: " & hostAdr.ToString()
             Next
         End If
