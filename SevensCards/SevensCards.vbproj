@@ -89,6 +89,7 @@
     <Compile Include="Board.vb" />
     <Compile Include="Card.vb" />
     <Compile Include="CardEnums.vb" />
+    <Compile Include="ClientHostFramework.vb" />
     <Compile Include="GameModel.vb" />
     <Compile Include="GameView.Designer.vb">
       <DependentUpon>GameView.vb</DependentUpon>
