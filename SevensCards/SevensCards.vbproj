@@ -90,6 +90,13 @@
     <Compile Include="Card.vb" />
     <Compile Include="CardEnums.vb" />
     <Compile Include="ClientHostFramework.vb" />
+    <Compile Include="DNSModel.vb" />
+    <Compile Include="DNSView.Designer.vb">
+      <DependentUpon>DNSView.vb</DependentUpon>
+    </Compile>
+    <Compile Include="DNSView.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="GameModel.vb" />
     <Compile Include="GameView.Designer.vb">
       <DependentUpon>GameView.vb</DependentUpon>
@@ -128,6 +135,9 @@
     <Compile Include="Player_WEB.vb" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="DNSView.resx">
+      <DependentUpon>DNSView.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GameView.resx">
       <DependentUpon>GameView.vb</DependentUpon>
     </EmbeddedResource>

@@ -23,6 +23,6 @@
     End Sub
 
     Private Sub Load_WebGame()
-        Dim gameModel As New GameModel(Me, FunctionPool.Mode.ONLINE)
+        Dim dnsModel As New DNSModel(Me)
     End Sub
 End Class

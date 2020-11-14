@@ -82,9 +82,7 @@ Public Class GameModel
     End Sub
 
     Public Sub GameClose()
-        For i As Integer = 0 To 3
-            players(i).KillListener()
-        Next
+
         End
     End Sub
 
@@ -156,14 +154,6 @@ Public Class GameModel
             finisherStr = "   Player " & turn & " finishes in position " & finishers & "!"
             If finishers = 4 Then finisherStr &= vbCrLf & vbCrLf & "    GAME OVER!"
             gameView.Finisher(finishers, turn)
-            End If
-
-            If mode = FunctionPool.Mode.ONLINE Then
-            For Each player As Player In players
-                If player.GetType = GetType(Player_WEB) Then
-                    player.SendMove(card, turn)
-                End If
-            Next
         End If
 
         Dim cardStr As String = "PASS"
