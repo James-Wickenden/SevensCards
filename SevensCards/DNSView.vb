@@ -2,6 +2,8 @@
     Private fp As New FunctionPool
     Private serverPanel, clientPanel As New Panel
 
+
+
     Private Sub DNSView_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         fp.FormSetup(Me, "DNS Manager")
         PanelSetup()
@@ -13,15 +15,6 @@
 
         ServerPanelSetup()
         ClientPanelSetup()
-
-        'fp.objectHandler.AddObject(Me, handsPanel, boardPanel.Height, 0, ((CARDHEIGHT + 4) * 10) + 20, boardPanel.Width, "")
-        'handsPanel.Height = Me.Height - handsPanel.Top
-        'handsPanel.BackColor = Color.BurlyWood
-
-        'fp.objectHandler.AddObject(Me, logPanel, 0, boardPanel.Width, Me.Height, (Me.Width - boardPanel.Width), "")
-        'LogSetup()
-
-        'fp.objectHandler.AddButton(handsPanel, but_Skip, 20, ((CARDWIDTH + 10) * 12) + 40, 50, CARDWIDTH, "Skip", AddressOf Skip)
     End Sub
 
     Private Sub ServerPanelSetup()
@@ -35,6 +28,8 @@
         Dim serverInfo As New TextBox
         fp.objectHandler.AddObject(serverPanel, serverInfo, 80, 20, clientPanel.Height / 2, serverPanel.Width - 40, "Server IP Info")
         LogSetup(serverInfo)
+
+
     End Sub
 
     Private Sub ClientPanelSetup()
@@ -46,8 +41,29 @@
         clientLabel.Font = New Font("Arial", 25)
 
         Dim clientInfo As New TextBox
-        fp.objectHandler.AddObject(clientPanel, clientInfo, 80, 20, clientPanel.Height / 2, clientPanel.Width - 40, "Client IP Info")
+        fp.objectHandler.AddObject(clientPanel, clientInfo, 80, 20, clientPanel.Height / 2, clientPanel.Width - 60, "Client IP Info")
         LogSetup(clientInfo)
+
+        ConnectPanelSetup()
+
+    End Sub
+
+    Private Sub ConnectPanelSetup()
+        Dim connectPanel As New Panel
+        fp.objectHandler.AddObject(clientPanel, connectPanel, clientPanel.Height / 2 + 100, 20, clientPanel.Height / 3 - 20, clientPanel.Width - 60, "")
+        connectPanel.BorderStyle = BorderStyle.FixedSingle
+        connectPanel.BackColor = Color.Green
+
+        Dim connectIP_lbl As New Label
+        fp.objectHandler.AddObject(connectPanel, connectIP_lbl, 20, 20, 30, 120, "IP Address:")
+        connectIP_lbl.Font = New Font("Arial", 15)
+
+        Dim connectIP_txt As New TextBox
+        fp.objectHandler.AddObject(connectPanel, connectIP_txt, 20, 160, 30, 120, "")
+
+        Dim connectButton As New Button
+        fp.objectHandler.AddButton(connectPanel, connectButton, 20, 300, 30, 120, "Connect", AddressOf ClientConnect)
+
     End Sub
 
     Private Sub LogSetup(Log As TextBox)
@@ -57,5 +73,9 @@
         Log.BackColor = Color.Black
         Log.ForeColor = Color.White
         Log.Font = New Font("Courier New", 15)
+    End Sub
+
+    Private Sub ClientConnect()
+
     End Sub
 End Class
