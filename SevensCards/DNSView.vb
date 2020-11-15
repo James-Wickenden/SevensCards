@@ -21,14 +21,17 @@
     End Sub
 
     Private Sub PanelSetup()
-        fp.objectHandler.AddObject(Me, serverPanel, 0, Me.Width / 2, Me.Height, Me.Width / 2, "Server")
-        fp.objectHandler.AddObject(Me, clientPanel, 0, 0, Me.Height, Me.Width / 2, "Client")
+        Dim serverBut As New Button
+        fp.objectHandler.AddButton(Me, serverBut, 20, Me.Width / 2 + 20, 50, 120, "Host Server",
+                                   New Action(Sub() ServerPanelSetup(serverBut)))
 
-        ServerPanelSetup()
         ClientPanelSetup()
     End Sub
 
-    Private Sub ServerPanelSetup()
+    Private Sub ServerPanelSetup(sender As Button)
+        sender.Dispose()
+
+        fp.objectHandler.AddObject(Me, serverPanel, 0, Me.Width / 2, Me.Height, Me.Width / 2, "Server")
         serverPanel.BorderStyle = BorderStyle.Fixed3D
         serverPanel.BackColor = Me.BackColor
 
@@ -43,6 +46,7 @@
     End Sub
 
     Private Sub ClientPanelSetup()
+        fp.objectHandler.AddObject(Me, clientPanel, 0, 0, Me.Height, Me.Width / 2, "Client")
         clientPanel.BorderStyle = BorderStyle.Fixed3D
         clientPanel.BackColor = Me.BackColor
 
