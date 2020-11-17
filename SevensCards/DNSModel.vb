@@ -17,10 +17,13 @@ Public Class DNSModel
     End Sub
 
     Public Sub StartServer()
-
         wc = New WebController(False, Me)
         Dim started As Boolean = wc.StartServer()
         If started Then dnsView.WriteToLog(dnsView.serverInfo, "Server started successfully.")
+    End Sub
+
+    Public Sub BeginGame()
+        dnsView.WriteToLog(dnsView.serverInfo, "Beginning game...")
     End Sub
 
     Public Sub WriteToLog(msg As String, isClient As Boolean)

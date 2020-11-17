@@ -107,6 +107,9 @@
         Dim startServer_but As New Button
         fp.objectHandler.AddButton(hostPanel, startServer_but, 70, 20, 30, 120, "Start Server", AddressOf dnsModel.StartServer)
 
+        Dim loadGame_but As New Button
+        fp.objectHandler.AddButton(hostPanel, loadGame_but, 70, 140, 30, 120, "Begin Game", AddressOf dnsModel.BeginGame)
+
         Dim showIPs_verbose_but As New Button
         fp.objectHandler.AddButton(hostPanel, showIPs_verbose_but, 20, 300, 30, 120, "Show local IPs", AddressOf dnsModel.ListDNS_Addresses)
     End Sub
