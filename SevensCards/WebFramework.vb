@@ -3,35 +3,29 @@ Imports System.IO
 Imports System.Net
 Imports System.Net.Sockets
 
-Module ClientHostFramework
+Module WebFramework
 
-    Private Class Controller
-        Public Sub New()
+    Public Class WebController
+        Private client As Client
+        Private server As Server
+        Private isClient As Boolean
 
-            Dim hostName As String = System.Net.Dns.GetHostName()
-            Dim addresses As IPAddress() = Dns.GetHostEntry(hostName).AddressList()
+        Public Sub New(isClient As Boolean)
+            Me.isClient = isClient
 
-            For Each hostAdr As IPAddress In addresses
-                Console.WriteLine("Name: " & hostName & " IP Address: " & hostAdr.ToString())
-                If hostAdr.AddressFamily.ToString() = "InterNetwork" Then
-                    Console.WriteLine("    [Potential host IP]")
-                End If
-            Next
-
-            Console.Write(vbCrLf & "Server/Client [S/C]: ")
-            Dim res As String = Console.ReadLine()
-
-            Select Case Char.ToUpper(res(0))
-                Case "S"
-                    Console.WriteLine("Server Selected!")
-                    Dim server As New Server
-                Case "C"
-                    Console.WriteLine("Client Selected!")
-                    Dim client As New Client
-            End Select
-
-            Console.ReadLine()
+            If isClient Then
+                client = New Client
+            Else
+                server = New Server
+            End If
         End Sub
+
+        Public Function StartServer() As Boolean
+            If server IsNot Nothing Then
+                Return server.StartServer()
+            End If
+            Return False
+        End Function
     End Class
 
     Private Class Client
@@ -44,7 +38,7 @@ Module ClientHostFramework
             Connect()
         End Sub
 
-        Sub ClientLoop()
+        Private Sub ClientLoop()
             While True
                 Console.Write("$ ")
                 Dim str As String = Console.ReadLine
@@ -58,7 +52,7 @@ Module ClientHostFramework
             End While
         End Sub
 
-        Sub Connect()
+        Private Sub Connect()
             Console.Write("Enter Server IP: ")
             ServerIP = Console.ReadLine
             Console.WriteLine("Trying to connect...")
@@ -76,7 +70,7 @@ Module ClientHostFramework
             End Try
         End Sub
 
-        Sub Connected()
+        Private Sub Connected()
             Console.Write("Connected." & vbCrLf & "$ ")
 
             If RX.BaseStream.CanRead Then
@@ -91,7 +85,7 @@ Module ClientHostFramework
             End If
         End Sub
 
-        Sub Disconnect()
+        Private Sub Disconnect()
             Try
                 Client.Close()
                 Console.WriteLine("Connection ended.")
@@ -99,7 +93,7 @@ Module ClientHostFramework
             End Try
         End Sub
 
-        Sub SendToServer(data As String)
+        Private Sub SendToServer(data As String)
             Try
                 TX.WriteLine(data)
                 TX.Flush()
@@ -108,7 +102,7 @@ Module ClientHostFramework
             End Try
         End Sub
 
-        Sub MSG(data As String)
+        Private Sub MSG(data As String)
             Console.WriteLine("MSG: " & data)
         End Sub
     End Class
@@ -121,13 +115,13 @@ Module ClientHostFramework
 
         Public Sub New()
             StartServer()
-            ServerLoop()
+            'ServerLoop()
 
             Console.WriteLine("Finished server executing.")
             Console.ReadLine()
         End Sub
 
-        Sub ServerLoop()
+        Private Sub ServerLoop()
             While (ServerStatus)
                 Console.Write("$ ")
                 Dim str As String = Console.ReadLine
@@ -140,7 +134,7 @@ Module ClientHostFramework
             End While
         End Sub
 
-        Sub StartServer()
+        Public Function StartServer() As Boolean
             If ServerStatus = False Then
                 ServerTrying = True
                 Try
@@ -148,16 +142,16 @@ Module ClientHostFramework
                     Server.Start()
                     ServerStatus = True
                     Threading.ThreadPool.QueueUserWorkItem(AddressOf ClientHandler)
-                    Console.WriteLine("Server Started...")
                 Catch ex As Exception
                     ServerStatus = False
+                    Return False
                 End Try
-
                 ServerTrying = False
             End If
-        End Sub
+            Return True
+        End Function
 
-        Sub StopServer()
+        Private Sub StopServer()
             If ServerStatus Then
                 ServerTrying = True
 
@@ -174,7 +168,7 @@ Module ClientHostFramework
             End If
         End Sub
 
-        Sub SendToClients(data As String)
+        Private Sub SendToClients(data As String)
             If ServerStatus Then
                 If Clients.Count > 0 Then
                     Try
@@ -193,7 +187,7 @@ Module ClientHostFramework
             End If
         End Sub
 
-        Sub ClientHandler()
+        Private Sub ClientHandler()
             Try
                 Dim Client As TcpClient = Server.AcceptTcpClient
                 If Not ServerTrying Then

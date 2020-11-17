@@ -2,6 +2,7 @@
 
 Public Class DNSModel
     Private dnsView As DNSView
+    Private wc As WebController
 
     Public Sub New(menu As Menu)
         dnsView = New DNSView()
@@ -16,7 +17,9 @@ Public Class DNSModel
     End Sub
 
     Public Sub StartServer()
-
+        wc = New WebController(False)
+        Dim started As Boolean = wc.StartServer()
+        If started Then dnsView.WriteToLog(dnsView.serverInfo, "Server started successfully.")
     End Sub
 
     Public Sub ListDNS_Addresses(Optional Verbose As Boolean = True)
@@ -38,6 +41,8 @@ Public Class DNSModel
 
             End If
         Next
+
+        dnsView.WriteToLog(dnsView.serverInfo, "Set to run with port 65535")
     End Sub
 
     Private Sub ListDNS_Address(hostName As String, ipAddress As String)
