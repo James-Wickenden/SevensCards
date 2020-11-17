@@ -9,11 +9,6 @@ Public Class DNSModel
         dnsView.SetDNSModel(Me)
         dnsView.Show()
         menu.Close()
-
-    End Sub
-
-    Public Sub SetViewInModel(dnsView As DNSView)
-        Me.dnsView = dnsView
     End Sub
 
     Public Sub StartServer()
@@ -24,6 +19,12 @@ Public Class DNSModel
 
     Public Sub BeginGame()
         dnsView.WriteToLog(dnsView.serverInfo, "Beginning game...")
+    End Sub
+
+    Public Sub ClientConnect(ipStr As String)
+        wc = New WebController(True, Me)
+        Dim connected As Boolean = wc.Connect(ipStr)
+        If Not connected Then dnsView.WriteToLog(dnsView.clientInfo, "Failed to connect.")
     End Sub
 
     Public Sub WriteToLog(msg As String, isClient As Boolean)

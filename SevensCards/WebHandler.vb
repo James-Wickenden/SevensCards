@@ -29,6 +29,13 @@ Module WebHandler
             End If
             Return False
         End Function
+
+        Public Function Connect(ServerIP As String) As Boolean
+            If client IsNot Nothing Then
+                Return client.Connect(ServerIP)
+            End If
+            Return False
+        End Function
     End Class
 
     Private Class Client
@@ -40,7 +47,6 @@ Module WebHandler
 
         Public Sub New(dnsModel As DNSModel)
             Me.dnsModel = dnsModel
-            Connect()
         End Sub
 
         Private Sub WriteToLog(msg As String)
@@ -61,10 +67,8 @@ Module WebHandler
         '    End While
         'End Sub
 
-        Private Sub Connect()
-            Console.Write("Enter Server IP: ")
-            ServerIP = Console.ReadLine
-            Console.WriteLine("Trying to connect...")
+        Public Function Connect(ServerIP As String) As Boolean
+            Me.ServerIP = ServerIP
             Try
                 Client = New TcpClient(ServerIP, 65535)
                 If Client.GetStream.CanRead Then
@@ -72,15 +76,15 @@ Module WebHandler
                     TX = New StreamWriter(Client.GetStream)
 
                     Threading.ThreadPool.QueueUserWorkItem(AddressOf Connected)
+                    Return True
                 End If
             Catch ex As Exception
-                Console.WriteLine(ex.Message)
             End Try
-        End Sub
+            Return False
+        End Function
 
         Private Sub Connected()
-            Console.Write("Connected." & vbCrLf & "$ ")
-
+            WriteToLog("Connected to " & ServerIP & ":65535")
             If RX.BaseStream.CanRead Then
                 Try
                     While RX.BaseStream.CanRead
@@ -124,12 +128,12 @@ Module WebHandler
 
         Public Sub New(dnsModel As DNSModel)
             Me.dnsModel = dnsModel
-            StartServer()
         End Sub
 
         Private Sub WriteToLog(msg As String)
             WTL(dnsModel, msg, False)
         End Sub
+
         'Private Sub ServerLoop()
         '    While (ServerStatus)
         '        Console.Write("$ ")

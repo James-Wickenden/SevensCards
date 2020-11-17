@@ -10,7 +10,6 @@
 
     Public Sub SetDNSModel(dnsModel As DNSModel)
         Me.dnsModel = dnsModel
-        dnsModel.SetViewInModel(Me)
     End Sub
 
     Public Sub WriteToLog(log As TextBox, str As String)
@@ -84,7 +83,7 @@
 
         Dim connectButton As New Button
         fp.objectHandler.AddButton(connectPanel, connectButton, 20, 300, 30, 120, "Connect",
-                                   New Action(Sub() ClientConnect(connectIP_txt.Text)))
+                                   New Action(Sub() dnsModel.ClientConnect(connectIP_txt.Text)))
 
     End Sub
 
@@ -124,7 +123,4 @@
         WriteToLog(Log, dispStr)
     End Sub
 
-    Private Sub ClientConnect(ipStr As String)
-        WriteToLog(clientInfo, ipStr)
-    End Sub
 End Class
