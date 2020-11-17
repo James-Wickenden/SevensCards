@@ -3,20 +3,23 @@ Imports System.IO
 Imports System.Net
 Imports System.Net.Sockets
 
-Module WebFramework
+Module WebHandler
+    Private Sub WTL(dnsModel As DNSModel, msg As String, isClient As Boolean)
+        dnsModel.WriteToLog(msg, isClient)
+    End Sub
 
     Public Class WebController
         Private client As Client
         Private server As Server
         Private isClient As Boolean
 
-        Public Sub New(isClient As Boolean)
+        Public Sub New(isClient As Boolean, dnsModel As DNSModel)
             Me.isClient = isClient
 
             If isClient Then
-                client = New Client
+                client = New Client(dnsModel)
             Else
-                server = New Server
+                server = New Server(dnsModel)
             End If
         End Sub
 
@@ -29,28 +32,34 @@ Module WebFramework
     End Class
 
     Private Class Client
-        Dim Client As TcpClient
-        Dim RX As StreamReader
-        Dim TX As StreamWriter
-        Dim ServerIP As String
+        Private Client As TcpClient
+        Private RX As StreamReader
+        Private TX As StreamWriter
+        Private ServerIP As String
+        Private dnsModel As DNSModel
 
-        Public Sub New()
+        Public Sub New(dnsModel As DNSModel)
+            Me.dnsModel = dnsModel
             Connect()
         End Sub
 
-        Private Sub ClientLoop()
-            While True
-                Console.Write("$ ")
-                Dim str As String = Console.ReadLine
-
-                If str.ToUpper = "DC" Then Disconnect()
-                If str.ToUpper.StartsWith("MSG") Then
-                    Console.Write("Enter message to the server: ")
-                    Dim data As String = Console.ReadLine
-                    Threading.ThreadPool.QueueUserWorkItem(AddressOf SendToServer, data)
-                End If
-            End While
+        Private Sub WriteToLog(msg As String)
+            WTL(dnsModel, msg, True)
         End Sub
+
+        'Private Sub ClientLoop()
+        '    While True
+        '        Console.Write("$ ")
+        '        Dim str As String = Console.ReadLine
+
+        '        If str.ToUpper = "DC" Then Disconnect()
+        '        If str.ToUpper.StartsWith("MSG") Then
+        '            Console.Write("Enter message to the server: ")
+        '            Dim data As String = Console.ReadLine
+        '            Threading.ThreadPool.QueueUserWorkItem(AddressOf SendToServer, data)
+        '        End If
+        '    End While
+        'End Sub
 
         Private Sub Connect()
             Console.Write("Enter Server IP: ")
@@ -63,7 +72,6 @@ Module WebFramework
                     TX = New StreamWriter(Client.GetStream)
 
                     Threading.ThreadPool.QueueUserWorkItem(AddressOf Connected)
-                    ClientLoop()
                 End If
             Catch ex As Exception
                 Console.WriteLine(ex.Message)
@@ -108,31 +116,32 @@ Module WebFramework
     End Class
 
     Private Class Server
-        Dim ServerStatus As Boolean = False
-        Dim ServerTrying As Boolean = False
-        Dim Server As TcpListener
-        Dim Clients As New List(Of TcpClient)
+        Private ServerStatus As Boolean = False
+        Private ServerTrying As Boolean = False
+        Private Server As TcpListener
+        Private Clients As New List(Of TcpClient)
+        Private dnsModel As DNSModel
 
-        Public Sub New()
+        Public Sub New(dnsModel As DNSModel)
+            Me.dnsModel = dnsModel
             StartServer()
-            'ServerLoop()
-
-            Console.WriteLine("Finished server executing.")
-            Console.ReadLine()
         End Sub
 
-        Private Sub ServerLoop()
-            While (ServerStatus)
-                Console.Write("$ ")
-                Dim str As String = Console.ReadLine
-                If str.ToUpper = "STOP" Then StopServer()
-                If str.ToUpper.StartsWith("MSG") Then
-                    Console.Write("Enter message to clients: ")
-                    Dim data As String = Console.ReadLine
-                    Threading.ThreadPool.QueueUserWorkItem(AddressOf SendToClients, data)
-                End If
-            End While
+        Private Sub WriteToLog(msg As String)
+            WTL(dnsModel, msg, False)
         End Sub
+        'Private Sub ServerLoop()
+        '    While (ServerStatus)
+        '        Console.Write("$ ")
+        '        Dim str As String = Console.ReadLine
+        '        If str.ToUpper = "STOP" Then StopServer()
+        '        If str.ToUpper.StartsWith("MSG") Then
+        '            Console.Write("Enter message to clients: ")
+        '            Dim data As String = Console.ReadLine
+        '            Threading.ThreadPool.QueueUserWorkItem(AddressOf SendToClients, data)
+        '        End If
+        '    End While
+        'End Sub
 
         Public Function StartServer() As Boolean
             If ServerStatus = False Then
@@ -154,14 +163,13 @@ Module WebFramework
         Private Sub StopServer()
             If ServerStatus Then
                 ServerTrying = True
-
                 Try
                     For Each Client As TcpClient In Clients
                         Client.Close()
                     Next
                     Server.Stop()
                     ServerStatus = False
-                    Console.WriteLine("Server Stopped")
+
                 Catch ex As Exception
                     StopServer()
                 End Try

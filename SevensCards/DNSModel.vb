@@ -17,9 +17,18 @@ Public Class DNSModel
     End Sub
 
     Public Sub StartServer()
-        wc = New WebController(False)
+
+        wc = New WebController(False, Me)
         Dim started As Boolean = wc.StartServer()
         If started Then dnsView.WriteToLog(dnsView.serverInfo, "Server started successfully.")
+    End Sub
+
+    Public Sub WriteToLog(msg As String, isClient As Boolean)
+        If isClient Then
+            dnsView.WriteToLog(dnsView.clientInfo, msg)
+        Else
+            dnsView.WriteToLog(dnsView.serverInfo, msg)
+        End If
     End Sub
 
     Public Sub ListDNS_Addresses(Optional Verbose As Boolean = True)
