@@ -22,6 +22,12 @@ Public Class DNSModel
     End Sub
 
     Public Sub ClientConnect(ipStr As String)
+        If wc IsNot Nothing Then
+            If wc.GetIsConnected Then
+                WriteToLog("Already connected to a server", True)
+                Exit Sub
+            End If
+        End If
         wc = New WebController(True, Me)
         Dim connected As Boolean = wc.Connect(ipStr)
         If Not connected Then dnsView.WriteToLog(dnsView.clientInfo, "Failed to connect.")

@@ -36,6 +36,11 @@ Module WebHandler
             End If
             Return False
         End Function
+
+        Public Function GetIsConnected() As Boolean
+            If client IsNot Nothing Then Return client.GetIsConnected
+            Return False
+        End Function
     End Class
 
     Private Class Client
@@ -44,6 +49,7 @@ Module WebHandler
         Private TX As StreamWriter
         Private ServerIP As String
         Private dnsModel As DNSModel
+        Private isConnected As Boolean = False
 
         Public Sub New(dnsModel As DNSModel)
             Me.dnsModel = dnsModel
@@ -52,6 +58,10 @@ Module WebHandler
         Private Sub WriteToLog(msg As String)
             WTL(dnsModel, msg, True)
         End Sub
+
+        Public Function GetIsConnected() As Boolean
+            Return isConnected
+        End Function
 
         'Private Sub ClientLoop()
         '    While True
@@ -89,7 +99,7 @@ Module WebHandler
                 Try
                     While RX.BaseStream.CanRead
                         Dim RawData As String = RX.ReadLine
-                        Console.Write("Server >> " & RawData & vbCrLf & "$ ")
+                        WriteToLog("Server >> " & RawData)
                     End While
                 Catch ex As Exception
                     Client.Close()
@@ -100,22 +110,18 @@ Module WebHandler
         Private Sub Disconnect()
             Try
                 Client.Close()
-                Console.WriteLine("Connection ended.")
+                WriteToLog("Connection ended.")
             Catch ex As Exception
             End Try
         End Sub
 
-        Private Sub SendToServer(data As String)
+        Public Sub SendToServer(data As String)
             Try
                 TX.WriteLine(data)
                 TX.Flush()
             Catch ex As Exception
 
             End Try
-        End Sub
-
-        Private Sub MSG(data As String)
-            Console.WriteLine("MSG: " & data)
         End Sub
     End Class
 
@@ -206,7 +212,7 @@ Module WebHandler
                     Threading.ThreadPool.QueueUserWorkItem(AddressOf ClientHandler)
                 End If
                 Clients.Add(Client)
-                Console.Write("Client added: " & Client.Client.RemoteEndPoint.ToString & vbCrLf & "$ ")
+                WriteToLog("Client added: " & Client.Client.RemoteEndPoint.ToString)
 
                 Dim TX As New StreamWriter(Client.GetStream)
                 Dim RX As New StreamReader(Client.GetStream)
@@ -214,21 +220,21 @@ Module WebHandler
                 If RX.BaseStream.CanRead Then
                     While RX.BaseStream.CanRead
                         Dim RawData As String = RX.ReadLine
-                        Console.Write(Client.Client.RemoteEndPoint.ToString & " >> " & RawData & vbCrLf & "$ ")
+                        WriteToLog(Client.Client.RemoteEndPoint.ToString & " >> " & RawData)
                     End While
                 End If
 
                 If Not RX.BaseStream.CanRead Then
                     Client.Close()
                     Clients.Remove(Client)
-                    Console.Write("Client removed: " & Client.Client.RemoteEndPoint.ToString & vbCrLf & "$ ")
+                    WriteToLog("Client removed: " & Client.Client.RemoteEndPoint.ToString)
                 End If
 
             Catch ex As Exception
                 For i As Integer = 0 To Clients.Count
                     If Not Clients(i).Connected Then
                         Clients(i).Close()
-                        Console.Write("Client removed." & vbCrLf & "$ " & vbCrLf)
+                        WriteToLog("Client removed.")
                         Clients.Remove(Clients(i))
                         Exit For
                     End If
