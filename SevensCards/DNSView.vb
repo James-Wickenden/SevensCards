@@ -4,6 +4,7 @@
     Public clientInfo, serverInfo As TextBox
 
     Private Sub DNSView_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        CheckForIllegalCrossThreadCalls = False
         fp.FormSetup(Me, "DNS Manager")
         PanelSetup()
     End Sub

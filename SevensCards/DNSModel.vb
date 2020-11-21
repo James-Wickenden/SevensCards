@@ -3,7 +3,7 @@
 Public Class DNSModel
     Private dnsView As DNSView
     Private wc As WebController
-    Private username As String = Nothing
+    Private username As String = "test"
 
     Public Sub New(menu As Menu)
         dnsView = New DNSView()
