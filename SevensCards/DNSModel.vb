@@ -3,6 +3,7 @@
 Public Class DNSModel
     Private dnsView As DNSView
     Private wc As WebController
+    Private username As String = "UNNAMED"
 
     Public Sub New(menu As Menu)
         dnsView = New DNSView()
@@ -19,6 +20,10 @@ Public Class DNSModel
 
     Public Sub BeginGame()
         dnsView.WriteToLog(dnsView.serverInfo, "Beginning game...")
+    End Sub
+
+    Public Sub SetUsername(username As String)
+        Me.username = username
     End Sub
 
     Public Sub ClientConnect(ipStr As String)

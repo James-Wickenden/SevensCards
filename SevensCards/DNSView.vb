@@ -87,6 +87,18 @@
         fp.objectHandler.AddButton(connectPanel, connectButton, 20, 300, 30, 120, "Connect",
                                    New Action(Sub() dnsModel.ClientConnect(connectIP_txt.Text)))
 
+        Dim username_lbl As New Label
+        fp.objectHandler.AddObject(connectPanel, username_lbl, 70, 20, 30, 120, "Username:")
+        username_lbl.Font = New Font("Arial", 15)
+        username_lbl.TextAlign = ContentAlignment.MiddleRight
+
+        Dim username_txt As New TextBox
+        fp.objectHandler.AddObject(connectPanel, username_txt, 70, 160, 30, 120, "")
+
+        Dim username_but As New Button
+        fp.objectHandler.AddButton(connectPanel, username_but, 70, 300, 30, 120, "Set Username",
+                                   New Action(Sub() SetUsername(username_txt.Text)))
+
     End Sub
 
     Private Sub StartServerPanelSetup(serverPanel As Panel)
@@ -125,4 +137,8 @@
         WriteToLog(Log, dispStr)
     End Sub
 
+    Private Sub SetUsername(username As String)
+        dnsModel.SetUsername(username)
+        WriteToLog(clientInfo, "Set username as " & username)
+    End Sub
 End Class
