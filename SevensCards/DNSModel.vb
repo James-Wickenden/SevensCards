@@ -3,7 +3,7 @@
 Public Class DNSModel
     Private dnsView As DNSView
     Private wc As WebController
-    Private username As String = "UNNAMED"
+    Private username As String = Nothing
 
     Public Sub New(menu As Menu)
         dnsView = New DNSView()
@@ -15,7 +15,7 @@ Public Class DNSModel
     Public Sub StartServer()
         wc = New WebController(False, Me)
         Dim started As Boolean = wc.StartServer()
-        If started Then dnsView.WriteToLog(dnsView.serverInfo, "Server started successfully.")
+        If started Then dnsView.WriteToLog(dnsView.serverInfo, "Server started successfully. Set host username in client panel!")
     End Sub
 
     Public Sub BeginGame()
@@ -27,15 +27,32 @@ Public Class DNSModel
     End Sub
 
     Public Sub ClientConnect(ipStr As String)
-        If wc IsNot Nothing Then
-            If wc.GetIsConnected Then
-                WriteToLog("Already connected to a server", True)
+        If username Is Nothing Then
+            WriteToLog("Set a username first (only alphanumerics)", True)
+            Exit Sub
+        Else
+            Dim valid As Boolean = System.Text.RegularExpressions.Regex.IsMatch(username, "^[a-zA-Z0-9]*$")
+            If Not valid Then
+                WriteToLog("Illegal character; only alphanumerics allowed", True)
                 Exit Sub
             End If
+
+            If wc IsNot Nothing Then
+                If wc.GetIsConnected Then
+                    WriteToLog("Already connected to a server", True)
+                    Exit Sub
+                End If
+            End If
         End If
+
         wc = New WebController(True, Me)
         Dim connected As Boolean = wc.Connect(ipStr)
-        If Not connected Then dnsView.WriteToLog(dnsView.clientInfo, "Failed to connect.")
+        If Not connected Then
+            dnsView.WriteToLog(dnsView.clientInfo, "Failed to connect.")
+            Exit Sub
+        End If
+
+        wc.SendToServer(username)
     End Sub
 
     Public Sub WriteToLog(msg As String, isClient As Boolean)

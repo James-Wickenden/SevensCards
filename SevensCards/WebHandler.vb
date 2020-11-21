@@ -37,6 +37,13 @@ Module WebHandler
             Return False
         End Function
 
+        Public Sub SendToServer(data As String)
+            If Not isClient Then Exit Sub
+            If client Is Nothing Then Exit Sub
+
+            client.SendToServer(data)
+        End Sub
+
         Public Function GetIsConnected() As Boolean
             If client IsNot Nothing Then Return client.GetIsConnected
             Return False
