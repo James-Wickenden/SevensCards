@@ -101,6 +101,7 @@ Module WebHandler
         End Function
 
         Private Sub Connected()
+            isConnected = True
             WriteToLog("Connected to " & ServerIP & ":65535")
             If RX.BaseStream.CanRead Then
                 Try

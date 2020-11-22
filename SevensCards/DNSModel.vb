@@ -52,7 +52,7 @@ Public Class DNSModel
             Exit Sub
         End If
 
-        wc.SendToServer(username)
+        wc.SendToServer("USERNAME:" & username)
     End Sub
 
     Public Sub WriteToLog(msg As String, isClient As Boolean)
