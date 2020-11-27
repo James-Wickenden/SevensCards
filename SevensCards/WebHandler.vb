@@ -37,7 +37,7 @@ Module WebHandler
             Return False
         End Function
 
-        Public Function Disconnect(ServerIP As String) As Boolean
+        Public Function Disconnect() As Boolean
             If client IsNot Nothing Then
                 Return client.Disconnect()
             End If
@@ -124,6 +124,7 @@ Module WebHandler
 
         Public Function Disconnect() As Boolean
             Try
+                SendToServer("DISCONNECT:DISCONNECT")
                 Client.Close()
                 WriteToLog("Connection ended.")
                 Return True

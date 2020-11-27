@@ -63,8 +63,9 @@ Public Class DNSModel
 
     Private Sub ClientDisconnect(sender As Button)
         If Not wc.GetIsConnected Then Exit Sub
-        sender.Text = "Connect"
+        If Not wc.Disconnect() Then Exit Sub
 
+        sender.Text = "Connect"
     End Sub
 
     Public Sub WriteToLog(msg As String, isClient As Boolean)
