@@ -86,7 +86,7 @@
 
         Dim connectButton As New Button
         fp.objectHandler.AddButton(connectPanel, connectButton, 20, 300, 30, 120, "Connect",
-                                   New Action(Sub() dnsModel.ClientConnect(connectIP_txt.Text)))
+                                   New Action(Sub() dnsModel.ClientConnect(connectButton, connectIP_txt.Text)))
 
         Dim username_lbl As New Label
         fp.objectHandler.AddObject(connectPanel, username_lbl, 70, 20, 30, 120, "Username:")
