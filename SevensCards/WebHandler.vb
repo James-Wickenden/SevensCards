@@ -224,6 +224,12 @@ Module WebHandler
             End If
         End Sub
 
+        Private Sub RemoveClient(Client As TcpClient)
+            Client.Close()
+            Clients.Remove(Client)
+            WriteToLog("Client removed: " & Client.Client.RemoteEndPoint.ToString)
+        End Sub
+
         Private Sub ClientHandler()
             Try
                 Dim Client As TcpClient = Server.AcceptTcpClient
@@ -244,17 +250,13 @@ Module WebHandler
                 End If
 
                 If Not RX.BaseStream.CanRead Then
-                    Client.Close()
-                    Clients.Remove(Client)
-                    WriteToLog("Client removed: " & Client.Client.RemoteEndPoint.ToString)
+                    RemoveClient(Client)
                 End If
 
             Catch ex As Exception
                 For i As Integer = 0 To Clients.Count
                     If Not Clients(i).Connected Then
-                        Clients(i).Close()
-                        WriteToLog("Client removed.")
-                        Clients.Remove(Clients(i))
+                        RemoveClient(Clients(i))
                         Exit For
                     End If
                 Next

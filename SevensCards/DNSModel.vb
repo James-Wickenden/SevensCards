@@ -28,6 +28,7 @@ Public Class DNSModel
 
     Public Sub ClientConnect(sender As Button, ipStr As String)
         If sender.Text = "Disconnect" Then
+            MsgBox("dc")
             ClientDisconnect(sender)
             Exit Sub
         End If

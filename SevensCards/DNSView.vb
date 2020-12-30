@@ -82,7 +82,7 @@
         connectIP_lbl.TextAlign = ContentAlignment.MiddleRight
 
         Dim connectIP_txt As New TextBox
-        fp.objectHandler.AddObject(connectPanel, connectIP_txt, 20, 160, 30, 120, "192.168.0.23")
+        fp.objectHandler.AddObject(connectPanel, connectIP_txt, 20, 160, 30, 120, "192.168.0.37")
 
         Dim connectButton As New Button
         fp.objectHandler.AddButton(connectPanel, connectButton, 20, 300, 30, 120, "Connect",
