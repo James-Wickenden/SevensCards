@@ -2,6 +2,7 @@
     Private fp As New FunctionPool
     Private dnsModel As DNSModel
     Public clientInfo, serverInfo As TextBox
+    Public playerNames(3) As Label
 
     Private Sub DNSView_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         CheckForIllegalCrossThreadCalls = False
@@ -48,6 +49,7 @@
 
         StartServerPanelSetup(serverPanel)
 
+
         dnsModel.ListDNS_Addresses(False)
     End Sub
 
@@ -66,13 +68,13 @@
         LogSetup(clientInfo, "Client IP Info")
 
         ConnectPanelSetup(clientPanel)
-
+        CurClientsSetup(clientPanel)
     End Sub
 
     Private Sub ConnectPanelSetup(clientPanel As Panel)
         Dim connectPanel As New Panel
         fp.objectHandler.AddObject(clientPanel, connectPanel, clientPanel.Height / 2 + 100, 20,
-                                   clientPanel.Height / 3 - 20, clientPanel.Width - 40, "")
+                                   clientPanel.Height / 3 - 20, clientPanel.Width / 2 - 40, "")
         connectPanel.BorderStyle = BorderStyle.FixedSingle
         connectPanel.BackColor = Color.Green
 
@@ -126,6 +128,33 @@
 
         Dim showIPs_verbose_but As New Button
         fp.objectHandler.AddButton(hostPanel, showIPs_verbose_but, 20, 300, 30, 120, "Show local IPs", AddressOf dnsModel.ListDNS_Addresses)
+    End Sub
+
+    Public Sub CurClientsSetup(clientPanel As Panel)
+        Dim playersPanel As New Panel
+        fp.objectHandler.AddObject(clientPanel, playersPanel, clientPanel.Height / 2 + 100, clientPanel.Width / 2,
+                                   clientPanel.Height / 3 - 20, clientPanel.Width / 2 - 20, "")
+
+        playersPanel.BorderStyle = BorderStyle.FixedSingle
+        playersPanel.BackColor = Color.Green
+        Dim titlelab As New Label
+        titlelab.Font = New Font("Arial", 20)
+        fp.objectHandler.AddObject(playersPanel, titlelab, 20, 20, 40, 160, "Players:")
+
+        Dim playersIndices(3) As Label
+        Dim playerFont As New Font("Arial", 18)
+
+        For i As Integer = 0 To playersIndices.Length - 1
+            playersIndices(i) = New Label
+            playersIndices(i).Font = playerFont
+            fp.objectHandler.AddObject(playersPanel, playersIndices(i), 80 + i * 50, 20, 30, 40, i)
+
+            playerNames(i) = New Label
+            playerNames(i).Font = playerFont
+            playerNames(i).BorderStyle = BorderStyle.FixedSingle
+            playerNames(i).BackColor = Color.White
+            fp.objectHandler.AddObject(playersPanel, playerNames(i), 80 + i * 50, 60, 30, 320, "COM")
+        Next
     End Sub
 
     Private Sub LogSetup(Log As TextBox, dispStr As String)

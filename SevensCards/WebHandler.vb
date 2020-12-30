@@ -206,9 +206,9 @@ Module WebHandler
         End Sub
 
         Private Sub RemoveClient(Client As TcpClient)
+            WriteToLog("Client removed: " & Client.Client.RemoteEndPoint.ToString)
             Client.Close()
             Clients.Remove(Client)
-            WriteToLog("Client removed: " & Client.Client.RemoteEndPoint.ToString)
         End Sub
 
         Private Sub ClientHandler()
