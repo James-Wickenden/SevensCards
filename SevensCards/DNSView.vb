@@ -153,7 +153,7 @@
             playerNames(i).Font = playerFont
             playerNames(i).BorderStyle = BorderStyle.FixedSingle
             playerNames(i).BackColor = Color.White
-            fp.objectHandler.AddObject(playersPanel, playerNames(i), 80 + i * 50, 60, 30, 320, "COM")
+            fp.objectHandler.AddObject(playersPanel, playerNames(i), 80 + i * 50, 60, 30, 320, "")
         Next
     End Sub
 

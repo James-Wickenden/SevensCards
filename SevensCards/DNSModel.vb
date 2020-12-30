@@ -16,6 +16,18 @@ Public Class DNSModel
         wc = New WebController(False, Me)
         Dim started As Boolean = wc.StartServer()
         If started Then dnsView.WriteToLog(dnsView.serverInfo, "Server started successfully. Set host username in client panel!")
+        UpdatePlayers({username})
+    End Sub
+
+    Private Sub UpdatePlayers(usernames() As String)
+        For i As Integer = 0 To dnsView.playerNames.Length - 1
+            If i <= usernames.Length - 1 Then
+                dnsView.playerNames(i).Text = usernames(i)
+            Else
+                dnsView.playerNames(i).Text = "COM"
+                dnsView.playerNames(i).ForeColor = Color.Red
+            End If
+        Next
     End Sub
 
     Public Sub BeginGame()
