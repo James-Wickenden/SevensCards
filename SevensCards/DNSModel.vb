@@ -27,12 +27,6 @@ Public Class DNSModel
     End Sub
 
     Public Sub ClientConnect(sender As Button, ipStr As String)
-        If sender.Text = "Disconnect" Then
-            MsgBox("dc")
-            ClientDisconnect(sender)
-            Exit Sub
-        End If
-
         If username Is Nothing Then
             WriteToLog("Set a username first (only alphanumerics)", True)
             Exit Sub
@@ -58,15 +52,7 @@ Public Class DNSModel
             Exit Sub
         End If
 
-        sender.Text = "Disconnect"
         wc.SendToServer("USERNAME:" & username)
-    End Sub
-
-    Private Sub ClientDisconnect(sender As Button)
-        If Not wc.GetIsConnected Then Exit Sub
-        If Not wc.Disconnect() Then Exit Sub
-
-        sender.Text = "Connect"
     End Sub
 
     Public Sub WriteToLog(msg As String, isClient As Boolean)

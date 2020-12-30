@@ -37,13 +37,6 @@ Module WebHandler
             Return False
         End Function
 
-        Public Function Disconnect() As Boolean
-            If client IsNot Nothing Then
-                Return client.Disconnect()
-            End If
-            Return False
-        End Function
-
         Public Sub SendToServer(data As String)
             If Not isClient Then Exit Sub
             If client Is Nothing Then Exit Sub
@@ -121,18 +114,6 @@ Module WebHandler
                 End Try
             End If
         End Sub
-
-        Public Function Disconnect() As Boolean
-            Try
-                SendToServer("DISCONNECT:DISCONNECT")
-                Client.Close()
-                WriteToLog("Connection ended.")
-                Return True
-            Catch ex As Exception
-                Return False
-            End Try
-            Return False
-        End Function
 
         Public Sub SendToServer(data As String)
             Try
