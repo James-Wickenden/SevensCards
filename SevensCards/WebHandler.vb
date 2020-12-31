@@ -228,6 +228,15 @@ Module WebHandler
                 If Not ServerTrying Then
                     Threading.ThreadPool.QueueUserWorkItem(AddressOf ClientHandler)
                 End If
+                If Clients.Count >= 3 Then
+                    MsgBox("Lobby overflow")
+                    Dim TX_C As New StreamWriter(Client.GetStream)
+                    TX_C.WriteLine("Lobby is full.")
+                    TX_C.Flush()
+                    Client.Close()
+                    Exit Sub
+                End If
+
                 Clients.Add(Client)
                 Usernames.Add(Client.Client.RemoteEndPoint.ToString, "_UNNAMED_")
                 WriteToLog("Client added: " & Client.Client.RemoteEndPoint.ToString)
