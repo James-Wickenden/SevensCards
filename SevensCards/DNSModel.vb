@@ -48,6 +48,11 @@ Public Class DNSModel
                 ServerDistributeUpdatedUsernames(client, rawData)
             Case "USERNAMES"
                 UpdatePlayers(ParseUsernames(rawData.Split(":")(1)))
+            Case "REMOVED"
+                If wc.GetIsClient Then Exit Sub
+                Dim usernames As String = username & "," & wc.GetClientUsernames
+                UpdatePlayers(ParseUsernames(usernames))
+                wc.SendToClients("USERNAMES:" & usernames)
         End Select
     End Sub
 
