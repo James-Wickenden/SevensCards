@@ -1,4 +1,5 @@
 ﻿Imports System.Net
+Imports System.Net.Sockets
 
 Public Class DNSModel
     Private dnsView As DNSView
@@ -36,6 +37,18 @@ Public Class DNSModel
 
     Public Sub SetUsername(username As String)
         Me.username = username
+        wc.SendToServer("USERNAME:" & username)
+    End Sub
+
+    Public Sub HandleIncomingClientMessage(client As TcpClient, rawData As String)
+        If rawData.Split(":")(0) = "USERNAME" Then
+            ServerDistributeUpdatedUsernames(client, rawData)
+        End If
+    End Sub
+
+    Private Sub ServerDistributeUpdatedUsernames(client As TcpClient, rawData As String)
+        wc.UpdateClientUsername(client, rawData.Split(":")(1))
+        wc.SendToClients("USERNAMES:")
     End Sub
 
     Public Sub ClientConnect(sender As Button, ipStr As String)

@@ -132,7 +132,7 @@ Public Class DNSView
         fp.objectHandler.AddButton(hostPanel, showIPs_verbose_but, 20, 300, 30, 120, "Show local IPs", AddressOf dnsModel.ListDNS_Addresses)
     End Sub
 
-    Public Sub CurClientsSetup(clientPanel As Panel)
+    Private Sub CurClientsSetup(clientPanel As Panel)
         Dim playersPanel As New Panel
         fp.objectHandler.AddObject(clientPanel, playersPanel, clientPanel.Height / 2 + 100, clientPanel.Width / 2,
                                    clientPanel.Height / 3 - 20, clientPanel.Width / 2 - 20, "")
