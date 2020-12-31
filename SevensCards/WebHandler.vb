@@ -23,6 +23,10 @@ Module WebHandler
             End If
         End Sub
 
+        Public Function GetIsClient() As Boolean
+            Return isClient
+        End Function
+
         Public Function StartServer() As Boolean
             If server IsNot Nothing Then
                 Return server.StartServer()
@@ -55,10 +59,16 @@ Module WebHandler
             Return False
         End Function
 
-        Public Function UpdateClientUsername(client As TcpClient, username As String) As String
+        Public Sub UpdateClientUsername(client As TcpClient, username As String)
+            If isClient Then Exit Sub
+            If server Is Nothing Then Exit Sub
+            server.UpdateUsername(client, username)
+        End Sub
+
+        Public Function GetClientUsernames() As String
             If isClient Then Return ""
             If server Is Nothing Then Return ""
-            Return server.UpdateUsername(client, username)
+            Return server.GetClientUsernames()
         End Function
     End Class
 
@@ -81,20 +91,6 @@ Module WebHandler
         Public Function GetIsConnected() As Boolean
             Return isConnected
         End Function
-
-        'Private Sub ClientLoop()
-        '    While True
-        '        Console.Write("$ ")
-        '        Dim str As String = Console.ReadLine
-
-        '        If str.ToUpper = "DC" Then Disconnect()
-        '        If str.ToUpper.StartsWith("MSG") Then
-        '            Console.Write("Enter message to the server: ")
-        '            Dim data As String = Console.ReadLine
-        '            Threading.ThreadPool.QueueUserWorkItem(AddressOf SendToServer, data)
-        '        End If
-        '    End While
-        'End Sub
 
         Public Function Connect(ServerIP As String) As Boolean
             Me.ServerIP = ServerIP
@@ -120,6 +116,7 @@ Module WebHandler
                     While RX.BaseStream.CanRead
                         Dim RawData As String = RX.ReadLine
                         WriteToLog("Server >> " & RawData)
+                        dnsModel.HandleIncomingMessage(Client, RawData)
                     End While
                 Catch ex As Exception
                     Client.Close()
@@ -145,6 +142,9 @@ Module WebHandler
                 Me.Client = client
                 Me.Username = username
             End Sub
+            Sub UpdateUsername(username As String)
+                Me.Username = username
+            End Sub
         End Structure
         Private ServerStatus As Boolean = False
         Private ServerTrying As Boolean = False
@@ -160,29 +160,21 @@ Module WebHandler
             WTL(dnsModel, msg, False)
         End Sub
 
-        'Private Sub ServerLoop()
-        '    While (ServerStatus)
-        '        Console.Write("$ ")
-        '        Dim str As String = Console.ReadLine
-        '        If str.ToUpper = "STOP" Then StopServer()
-        '        If str.ToUpper.StartsWith("MSG") Then
-        '            Console.Write("Enter message to clients: ")
-        '            Dim data As String = Console.ReadLine
-        '            Threading.ThreadPool.QueueUserWorkItem(AddressOf SendToClients, data)
-        '        End If
-        '    End While
-        'End Sub
-
-        Public Function UpdateUsername(client As TcpClient, newUsername As String) As String
+        Public Function GetClientUsernames() As String
             Dim res As String = ""
+            For Each client As ConnectedClient In Clients
+                res &= client.Username & ","
+            Next
+            Return res
+        End Function
+
+        Public Sub UpdateUsername(client As TcpClient, newUsername As String)
             For Each connectedClient As ConnectedClient In Clients
                 If connectedClient.Client.Equals(client) Then
                     connectedClient.Username = newUsername
                 End If
-                res &= connectedClient.Username & ","
             Next
-            Return res
-        End Function
+        End Sub
 
         Public Function StartServer() As Boolean
             If ServerStatus = False Then
@@ -259,7 +251,8 @@ Module WebHandler
                     While RX.BaseStream.CanRead
                         Dim RawData As String = RX.ReadLine
                         WriteToLog(connectedClient.Client.Client.RemoteEndPoint.ToString & " >> " & RawData)
-                        dnsModel.HandleIncomingClientMessage(connectedClient.Client, RawData)
+                        dnsModel.HandleIncomingMessage(connectedClient.Client, RawData)
+                        Clients(0).UpdateUsername("baba")
                     End While
                 End If
 

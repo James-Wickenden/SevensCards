@@ -30,6 +30,7 @@ Public Class DNSModel
         For i As Integer = 0 To dnsView.playerNames.Length - 1
             If i <= usernames.Length - 1 Then
                 dnsView.playerNames(i).Text = usernames(i)
+                dnsView.playerNames(i).ForeColor = Color.Black
             Else
                 dnsView.playerNames(i).Text = "COM"
                 dnsView.playerNames(i).ForeColor = Color.Red
@@ -41,22 +42,34 @@ Public Class DNSModel
         dnsView.WriteToLog(dnsView.serverInfo, "Beginning game...")
     End Sub
 
-    Public Sub SetUsername(username As String)
-        Me.username = username
-        wc.SendToServer("USERNAME:" & username)
-    End Sub
-
-    Public Sub HandleIncomingClientMessage(client As TcpClient, rawData As String)
-        If rawData.Split(":")(0) = "USERNAME" Then
-            ServerDistributeUpdatedUsernames(client, rawData)
-        End If
+    Public Sub HandleIncomingMessage(client As TcpClient, rawData As String)
+        Select Case rawData.Split(":")(0)
+            Case "USERNAME"
+                ServerDistributeUpdatedUsernames(client, rawData)
+            Case "USERNAMES"
+                UpdatePlayers(ParseUsernames(rawData.Split(":")(1)))
+        End Select
     End Sub
 
     Private Sub ServerDistributeUpdatedUsernames(client As TcpClient, rawData As String)
-        Dim usernames As String = wc.UpdateClientUsername(client, rawData.Split(":")(1))
+        wc.UpdateClientUsername(client, rawData.Split(":")(1))
+        Dim usernames As String = username & "," & wc.GetClientUsernames
         If usernames = "" Then Exit Sub
         UpdatePlayers(ParseUsernames(usernames))
         wc.SendToClients("USERNAMES:" & usernames)
+    End Sub
+
+    Public Sub SetUsername(username As String)
+        Me.username = username
+        If wc Is Nothing Then Exit Sub
+
+        If wc.GetIsClient() Then
+            wc.SendToServer("USERNAME:" & username)
+        Else
+            Dim usernames As String = username & "," & wc.GetClientUsernames
+            wc.SendToClients("USERNAMES:" & usernames)
+            UpdatePlayers(ParseUsernames(usernames))
+        End If
     End Sub
 
     Public Sub ClientConnect(sender As Button, ipStr As String)

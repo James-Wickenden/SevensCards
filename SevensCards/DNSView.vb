@@ -35,8 +35,9 @@ Public Class DNSView
 
     Private Sub ServerPanelSetup(sender As Button, serverPanel As Panel)
         sender.Dispose()
-
-        fp.objectHandler.AddObject(Me, serverPanel, 0, Me.Width / 2, Me.Height, Me.Width / 2, "")
+        Dim width As Integer = Me.Width / 2
+        If Me.Width / 2 < 800 Then width = 800
+        fp.objectHandler.AddObject(Me, serverPanel, 0, width, Me.Height, Me.Width - width, "")
         serverPanel.BorderStyle = BorderStyle.Fixed3D
         serverPanel.BackColor = Me.BackColor
 
@@ -56,7 +57,9 @@ Public Class DNSView
     End Sub
 
     Private Sub ClientPanelSetup(clientPanel As Panel)
-        fp.objectHandler.AddObject(Me, clientPanel, 0, 0, Me.Height, Me.Width / 2, "")
+        Dim width As Integer = Me.Width / 2
+        If Me.Width / 2 < 800 Then width = 800
+        fp.objectHandler.AddObject(Me, clientPanel, 0, 0, Me.Height, width, "")
         clientPanel.BorderStyle = BorderStyle.Fixed3D
         clientPanel.BackColor = Me.BackColor
 
