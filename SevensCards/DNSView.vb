@@ -1,4 +1,6 @@
-﻿Public Class DNSView
+﻿Imports Microsoft.VisualBasic.ApplicationServices
+
+Public Class DNSView
     Private fp As New FunctionPool
     Private dnsModel As DNSModel
     Public clientInfo, serverInfo As TextBox
@@ -168,6 +170,16 @@
     End Sub
 
     Private Sub SetUsername(username As String)
+        If username = "" Then
+            WriteToLog(clientInfo, "Username is empty")
+            Exit Sub
+        End If
+        For Each c As Char In username
+            If Not Char.IsLetterOrDigit(c) Then
+                WriteToLog(clientInfo, "Username must contain only characters 0..9, a..Z")
+                Exit Sub
+            End If
+        Next
         dnsModel.SetUsername(username)
         WriteToLog(clientInfo, "Set username as " & username)
     End Sub
