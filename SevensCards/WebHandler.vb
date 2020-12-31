@@ -135,21 +135,11 @@ Module WebHandler
     End Class
 
     Private Class Server
-        Private Structure ConnectedClient
-            Dim Client As TcpClient
-            Dim Username As String
-            Sub New(client As TcpClient, username As String)
-                Me.Client = client
-                Me.Username = username
-            End Sub
-            Sub UpdateUsername(username As String)
-                Me.Username = username
-            End Sub
-        End Structure
         Private ServerStatus As Boolean = False
         Private ServerTrying As Boolean = False
         Private Server As TcpListener
-        Private Clients As New List(Of ConnectedClient)
+        Private Clients As New List(Of TcpClient)
+        Private Usernames As New Dictionary(Of String, String)
         Private dnsModel As DNSModel
 
         Public Sub New(dnsModel As DNSModel)
@@ -162,18 +152,14 @@ Module WebHandler
 
         Public Function GetClientUsernames() As String
             Dim res As String = ""
-            For Each client As ConnectedClient In Clients
-                res &= client.Username & ","
+            For Each val As String In Usernames.Values
+                res &= val & ","
             Next
             Return res
         End Function
 
         Public Sub UpdateUsername(client As TcpClient, newUsername As String)
-            For Each connectedClient As ConnectedClient In Clients
-                If connectedClient.Client.Equals(client) Then
-                    connectedClient.Username = newUsername
-                End If
-            Next
+            Usernames(client.Client.RemoteEndPoint.ToString) = newUsername
         End Sub
 
         Public Function StartServer() As Boolean
@@ -197,8 +183,8 @@ Module WebHandler
             If ServerStatus Then
                 ServerTrying = True
                 Try
-                    For Each Client As ConnectedClient In Clients
-                        Client.Client.Close()
+                    For Each Client As TcpClient In Clients
+                        Client.Close()
                     Next
                     Server.Stop()
                     ServerStatus = False
@@ -213,9 +199,9 @@ Module WebHandler
             If ServerStatus Then
                 If Clients.Count > 0 Then
                     Try
-                        For Each Client As ConnectedClient In Clients
-                            Dim TX_C As New StreamWriter(Client.Client.GetStream)
-                            Dim RX_C As New StreamReader(Client.Client.GetStream)
+                        For Each Client As TcpClient In Clients
+                            Dim TX_C As New StreamWriter(Client.GetStream)
+                            Dim RX_C As New StreamReader(Client.GetStream)
 
                             TX_C.WriteLine(data)
                             TX_C.Flush()
@@ -228,36 +214,35 @@ Module WebHandler
             End If
         End Sub
 
-        Private Sub RemoveClient(Client As ConnectedClient)
-            WriteToLog("Client removed: " & Client.Client.Client.RemoteEndPoint.ToString)
-            Client.Client.Close()
+        Private Sub RemoveClient(Client As TcpClient)
+            WriteToLog("Client removed: " & Client.Client.RemoteEndPoint.ToString)
+            Client.Close()
             Clients.Remove(Client)
         End Sub
 
         Private Sub ClientHandler()
             Try
-                Dim tmpClient As TcpClient = Server.AcceptTcpClient
+                Dim Client As TcpClient = Server.AcceptTcpClient
                 If Not ServerTrying Then
                     Threading.ThreadPool.QueueUserWorkItem(AddressOf ClientHandler)
                 End If
-                Dim connectedClient As New ConnectedClient(tmpClient, "_NULLUSER_")
-                Clients.Add(connectedClient)
-                WriteToLog("Client added: " & connectedClient.Client.Client.RemoteEndPoint.ToString)
+                Clients.Add(Client)
+                Usernames.Add(Client.Client.RemoteEndPoint.ToString, "_UNNAMED_")
+                WriteToLog("Client added: " & Client.Client.RemoteEndPoint.ToString)
 
-                Dim TX As New StreamWriter(connectedClient.Client.GetStream)
-                Dim RX As New StreamReader(connectedClient.Client.GetStream)
+                Dim TX As New StreamWriter(Client.GetStream)
+                Dim RX As New StreamReader(Client.GetStream)
 
                 If RX.BaseStream.CanRead Then
                     While RX.BaseStream.CanRead
                         Dim RawData As String = RX.ReadLine
-                        WriteToLog(connectedClient.Client.Client.RemoteEndPoint.ToString & " >> " & RawData)
-                        dnsModel.HandleIncomingMessage(connectedClient.Client, RawData)
-                        Clients(0).UpdateUsername("baba")
+                        WriteToLog(Client.Client.RemoteEndPoint.ToString & " >> " & RawData)
+                        dnsModel.HandleIncomingMessage(Client, RawData)
                     End While
                 End If
 
                 If Not RX.BaseStream.CanRead Then
-                    RemoveClient(connectedClient)
+                    RemoveClient(Client)
                 End If
 
             Catch ex As Exception
