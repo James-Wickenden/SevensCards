@@ -55,11 +55,11 @@ Module WebHandler
             Return False
         End Function
 
-        Public Sub UpdateClientUsername(client As TcpClient, username As String)
-            If isClient Then Exit Sub
-            If server Is Nothing Then Exit Sub
-            server.UpdateUsername(client, username)
-        End Sub
+        Public Function UpdateClientUsername(client As TcpClient, username As String) As String
+            If isClient Then Return ""
+            If server Is Nothing Then Return ""
+            Return server.UpdateUsername(client, username)
+        End Function
     End Class
 
     Private Class Client
@@ -173,13 +173,16 @@ Module WebHandler
         '    End While
         'End Sub
 
-        Public Sub UpdateUsername(client As TcpClient, newUsername As String)
+        Public Function UpdateUsername(client As TcpClient, newUsername As String) As String
+            Dim res As String = ""
             For Each connectedClient As ConnectedClient In Clients
                 If connectedClient.Client.Equals(client) Then
                     connectedClient.Username = newUsername
                 End If
+                res &= connectedClient.Username & ","
             Next
-        End Sub
+            Return res
+        End Function
 
         Public Function StartServer() As Boolean
             If ServerStatus = False Then

@@ -20,6 +20,12 @@ Public Class DNSModel
         UpdatePlayers({username})
     End Sub
 
+    Private Function ParseUsernames(usernames As String) As String()
+        Dim splitUsers As String() = usernames.Split(",")
+
+        Return splitUsers.Take(splitUsers.Length - 1).ToArray
+    End Function
+
     Private Sub UpdatePlayers(usernames() As String)
         For i As Integer = 0 To dnsView.playerNames.Length - 1
             If i <= usernames.Length - 1 Then
@@ -47,8 +53,10 @@ Public Class DNSModel
     End Sub
 
     Private Sub ServerDistributeUpdatedUsernames(client As TcpClient, rawData As String)
-        wc.UpdateClientUsername(client, rawData.Split(":")(1))
-        wc.SendToClients("USERNAMES:")
+        Dim usernames As String = wc.UpdateClientUsername(client, rawData.Split(":")(1))
+        If usernames = "" Then Exit Sub
+        UpdatePlayers(ParseUsernames(usernames))
+        wc.SendToClients("USERNAMES:" & usernames)
     End Sub
 
     Public Sub ClientConnect(sender As Button, ipStr As String)
