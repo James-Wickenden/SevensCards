@@ -3,7 +3,7 @@ Imports System.IO
 Imports System.Net
 Imports System.Net.Sockets
 
-Module WebHandler
+public Module WebHandler
     Private Sub WTL(dnsModel As DNSModel, msg As String, isClient As Boolean)
         dnsModel.WriteToLog(msg, isClient)
     End Sub
@@ -257,7 +257,7 @@ Module WebHandler
                 End If
 
             Catch ex As Exception
-                For i As Integer = 0 To Clients.Count
+                For i As Integer = 0 To Clients.Count - 1
                     If Not Clients(i).Client.Connected Then
                         RemoveClient(Clients(i))
                         Exit For

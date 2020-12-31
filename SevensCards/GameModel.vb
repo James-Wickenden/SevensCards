@@ -10,14 +10,16 @@ Public Class GameModel
     Private moveThread As Threading.Thread
     Private mode As FunctionPool.Mode
     Private AI_difficulty As Integer = 2
+    Private wc As WebController
 
-    Public Sub New(menu As Menu, mode As Integer)
+    Public Sub New(menu As Form, mode As Integer, Optional wc As WebController = Nothing)
         Me.mode = mode
         gameView = New GameView()
         gameView.SetGameModel(Me)
         gameView.Show()
         menu.Close()
 
+        Me.wc = wc
         GameSetup()
         gameView.DrawView(board, players, turn, mode)
         GameLoop()

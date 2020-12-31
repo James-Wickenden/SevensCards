@@ -52,7 +52,6 @@ Public Class DNSView
 
         StartServerPanelSetup(serverPanel)
 
-
         dnsModel.ListDNS_Addresses(False)
     End Sub
 
@@ -107,6 +106,17 @@ Public Class DNSView
         fp.objectHandler.AddButton(connectPanel, username_but, 70, 300, 30, 120, "Set Username",
                                    New Action(Sub() SetUsername(username_txt.Text)))
 
+        GenerateUsername(username_txt)
+    End Sub
+
+    Private Sub GenerateUsername(username_txt As TextBox)
+        Dim name As String = ""
+        Dim generator As New Random
+        For i As Integer = 0 To 10
+            name &= Microsoft.VisualBasic.Chr(generator.Next(Asc("a"), Asc("z")))
+        Next
+        username_txt.Text = name
+        SetUsername(username_txt.Text)
     End Sub
 
     Private Sub StartServerPanelSetup(serverPanel As Panel)

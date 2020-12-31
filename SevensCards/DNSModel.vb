@@ -4,7 +4,7 @@ Imports System.Net.Sockets
 Public Class DNSModel
     Private dnsView As DNSView
     Private wc As WebController
-    Private username As String = "test"
+    Private username As String
 
     Public Sub New(menu As Menu)
         dnsView = New DNSView()
@@ -39,7 +39,12 @@ Public Class DNSModel
     End Sub
 
     Public Sub BeginGame()
+        If wc Is Nothing Then Exit Sub
         dnsView.WriteToLog(dnsView.serverInfo, "Beginning game...")
+
+        Dim gameModel As New GameModel(dnsView, FunctionPool.Mode.ONLINE, wc)
+
+        wc.SendToClients("START:")
     End Sub
 
     Public Sub HandleIncomingMessage(client As TcpClient, rawData As String)
@@ -53,6 +58,8 @@ Public Class DNSModel
                 Dim usernames As String = username & "," & wc.GetClientUsernames
                 UpdatePlayers(ParseUsernames(usernames))
                 wc.SendToClients("USERNAMES:" & usernames)
+            Case "START"
+                BeginGame()
         End Select
     End Sub
 
@@ -78,6 +85,7 @@ Public Class DNSModel
     End Sub
 
     Public Sub ClientConnect(sender As Button, ipStr As String)
+
         If username Is Nothing Then
             WriteToLog("Set a username first (only alphanumerics)", True)
             Exit Sub
@@ -93,6 +101,12 @@ Public Class DNSModel
                     WriteToLog("Already connected to a server", True)
                     Exit Sub
                 End If
+            End If
+        End If
+        If wc IsNot Nothing Then
+            If Not wc.GetIsClient Then
+                dnsView.WriteToLog(dnsView.clientInfo, "This instance is already hosting.")
+                Exit Sub
             End If
         End If
 
