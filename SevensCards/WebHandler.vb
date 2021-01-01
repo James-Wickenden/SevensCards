@@ -12,6 +12,7 @@ public Module WebHandler
         Private client As Client
         Private server As Server
         Private isClient As Boolean
+        Private clientGameReady As Boolean = False
 
         Public Sub New(isClient As Boolean, dnsModel As DNSModel)
             Me.isClient = isClient
@@ -25,6 +26,13 @@ public Module WebHandler
 
         Public Function GetIsClient() As Boolean
             Return isClient
+        End Function
+
+        Public Sub SetClientGameReady(cgr As Boolean)
+            clientGameReady = cgr
+        End Sub
+        Public Function GetClientGameReady() As Boolean
+            Return clientGameReady
         End Function
 
         Public Function StartServer() As Boolean

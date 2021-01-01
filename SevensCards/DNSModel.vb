@@ -5,12 +5,17 @@ Public Class DNSModel
     Private dnsView As DNSView
     Private wc As WebController
     Private username As String
+    Private gameModel As GameModel
 
     Public Sub New(menu As Menu)
         dnsView = New DNSView()
         dnsView.SetDNSModel(Me)
         dnsView.Show()
         menu.Close()
+    End Sub
+
+    Public Sub SetGameModel(gm As GameModel)
+        gameModel = gm
     End Sub
 
     Public Sub StartServer()
@@ -40,11 +45,9 @@ Public Class DNSModel
 
     Public Sub BeginGame()
         If wc Is Nothing Then Exit Sub
-        dnsView.WriteToLog(dnsView.serverInfo, "Beginning game...")
-
-        Dim gameModel As New GameModel(dnsView, FunctionPool.Mode.ONLINE, wc)
-
+        dnsView.WriteToLog(dnsView.clientInfo, "Beginning game...")
         wc.SendToClients("START:")
+        Dim gameModel As New GameModel(dnsView, FunctionPool.Mode.ONLINE, wc)
     End Sub
 
     Public Sub HandleIncomingMessage(client As TcpClient, rawData As String)
@@ -59,8 +62,14 @@ Public Class DNSModel
                 UpdatePlayers(ParseUsernames(usernames))
                 wc.SendToClients("USERNAMES:" & usernames)
             Case "START"
-                BeginGame()
+                Threading.ThreadPool.QueueUserWorkItem(AddressOf BeginGame)
+            Case "BOARD"
+                ParseSetupBoard(rawData.Split(":")(1))
         End Select
+    End Sub
+
+    Private Sub ParseSetupBoard(boardStr As String)
+        MsgBox(boardStr)
     End Sub
 
     Private Sub ServerDistributeUpdatedUsernames(client As TcpClient, rawData As String)

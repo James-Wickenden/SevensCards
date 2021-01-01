@@ -1,4 +1,5 @@
-﻿Imports System.Net
+﻿Imports System.IO
+Imports System.Net
 Imports System.Threading
 
 Public Class GameModel
@@ -20,12 +21,16 @@ Public Class GameModel
         menu.Close()
 
         Me.wc = wc
-        GameSetup()
+        If Not Me.mode = FunctionPool.Mode.ONLINE Then
+            LocalGameSetup()
+        Else
+            OnlineGameSetup()
+        End If
         gameView.DrawView(board, players, turn, mode)
         GameLoop()
     End Sub
 
-    Private Sub GameSetup()
+    Private Sub LocalGameSetup()
         Dim deck As New Deck()
         deck.ShuffleDeck()
 
@@ -40,11 +45,8 @@ Public Class GameModel
                     gameView.KillSkip()
                 Case FunctionPool.Mode.HUM
                     players(i) = New Player_HUM
-                Case FunctionPool.Mode.ONLINE
-                    If i = 0 Then players(i) = New Player_HUM
-                    If i = 1 Then players(i) = New Player_WEB
-                    If i > 1 Then players(i) = New Player_COM(AI_difficulty)
             End Select
+
             players(i).SetCallback(AddressOf ResultCallback)
             Dim playerHand As New List(Of Card)
             For j As Integer = 0 To 11
@@ -53,7 +55,7 @@ Public Class GameModel
             players(i).SetHand(New Hand(playerHand.ToArray))
             players(i).GetHand.SortHand()
         Next
-        Randomize()
+        'Randomize()
         turn = Int((4) * Rnd())
 
         Dim gameStr As String = "Started new game: "
@@ -75,6 +77,41 @@ Public Class GameModel
         End If
 
         gameView.WriteToLog(gameStr)
+    End Sub
+
+    Private Sub OnlineGameSetup()
+        If wc.GetIsClient Then
+            While Not wc.GetClientGameReady
+                Threading.Thread.Sleep(1000)
+                gameView.WriteToLog("Waiting for the server to set up the game...")
+            End While
+        Else
+            SetupServerGame()
+        End If
+    End Sub
+
+    Private Sub SetupServerGame()
+        Dim deck As New Deck()
+        deck.ShuffleDeck()
+
+        For i As Integer = 0 To 3
+            players(i) = New Player_COM(AI_difficulty)
+            players(i).SetCanSeeHand(True)
+            gameView.KillSkip()
+
+            players(i).SetCallback(AddressOf ResultCallback)
+
+            Dim playerHand As New List(Of Card)
+            For j As Integer = 0 To 11
+                playerHand.Add(deck.GetCard((12 * i) + j))
+            Next
+            players(i).SetHand(New Hand(playerHand.ToArray))
+            players(i).GetHand.SortHand()
+        Next
+
+        'Randomize()
+        turn = Int((4) * Rnd())
+        wc.SendToClients("BOARD:test")
     End Sub
 
     Private Sub GameLoop()
