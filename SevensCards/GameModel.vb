@@ -81,6 +81,7 @@ Public Class GameModel
 
     Private Sub OnlineGameSetup()
         If wc.GetIsClient Then
+            Threading.ThreadPool.QueueUserWorkItem(AddressOf wc.Reconnect)
             While Not wc.GetClientGameReady
                 Threading.Thread.Sleep(1000)
                 gameView.WriteToLog("Waiting for the server to set up the game...")

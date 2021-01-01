@@ -62,7 +62,8 @@ Public Class DNSModel
                 UpdatePlayers(ParseUsernames(usernames))
                 wc.SendToClients("USERNAMES:" & usernames)
             Case "START"
-                Threading.ThreadPool.QueueUserWorkItem(AddressOf BeginGame)
+                BeginGame()
+                'Threading.ThreadPool.QueueUserWorkItem(AddressOf Connected)
             Case "BOARD"
                 ParseSetupBoard(rawData.Split(":")(1))
         End Select

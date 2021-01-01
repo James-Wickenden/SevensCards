@@ -49,6 +49,10 @@ public Module WebHandler
             Return False
         End Function
 
+        Public Sub Reconnect()
+            If client IsNot Nothing Then client.Reconnect()
+        End Sub
+
         Public Sub SendToServer(data As String)
             If Not isClient Then Exit Sub
             If client Is Nothing Then Exit Sub
@@ -115,6 +119,21 @@ public Module WebHandler
             End Try
             Return False
         End Function
+
+        Public Sub Reconnect()
+            RX = New StreamReader(Client.GetStream)
+            TX = New StreamWriter(Client.GetStream)
+            If RX.BaseStream.CanRead Then
+                Try
+                    While RX.BaseStream.CanRead
+                        Dim RawData As String = RX.ReadLine
+                        dnsModel.HandleIncomingMessage(Client, RawData)
+                    End While
+                Catch ex As Exception
+                    Client.Close()
+                End Try
+            End If
+        End Sub
 
         Private Sub Connected()
             isConnected = True
