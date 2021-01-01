@@ -12,8 +12,9 @@ Public Class GameModel
     Private mode As FunctionPool.Mode
     Private AI_difficulty As Integer = 2
     Private wc As WebController
+    Private dnsModel As DNSModel
 
-    Public Sub New(menu As Form, mode As Integer, Optional wc As WebController = Nothing)
+    Public Sub New(menu As Form, mode As Integer, Optional wc As WebController = Nothing, Optional dnsModel As DNSModel = Nothing)
         Me.mode = mode
         gameView = New GameView()
         gameView.SetGameModel(Me)
@@ -21,13 +22,37 @@ Public Class GameModel
         menu.Close()
 
         Me.wc = wc
+        Me.dnsModel = dnsModel
         If Not Me.mode = FunctionPool.Mode.ONLINE Then
             LocalGameSetup()
         Else
+            dnsModel.SetGameModel(Me)
             OnlineGameSetup()
         End If
         gameView.DrawView(board, players, turn, mode)
         GameLoop()
+    End Sub
+
+    Private Sub PrintGameIntro()
+        Dim gameStr As String = "Started new game: "
+        Select Case mode
+            Case FunctionPool.Mode.OFFLINE : gameStr &= "OFFLINE"
+            Case FunctionPool.Mode.COM : gameStr &= "COMS"
+            Case FunctionPool.Mode.HUM : gameStr &= "HUMANS"
+            Case FunctionPool.Mode.ONLINE : gameStr &= "ONLINE"
+        End Select
+        If Not mode = FunctionPool.Mode.HUM Then gameStr &= vbCrLf & " -AI Difficulty is set to " & AI_difficulty
+        gameStr &= vbCrLf & " -Player " & turn & " begins." & vbCrLf
+
+        If mode = FunctionPool.Mode.ONLINE Then
+            Dim hostName = Dns.GetHostName()
+            Dim addresses As IPAddress() = Dns.GetHostEntry(hostName).AddressList()
+            For Each hostAdr As IPAddress In addresses
+                gameStr &= vbCrLf & "Name: " & hostName & " IP Address: " & hostAdr.ToString()
+            Next
+        End If
+
+        gameView.WriteToLog(gameStr)
     End Sub
 
     Private Sub LocalGameSetup()
@@ -58,25 +83,7 @@ Public Class GameModel
         'Randomize()
         turn = Int((4) * Rnd())
 
-        Dim gameStr As String = "Started new game: "
-        Select Case mode
-            Case FunctionPool.Mode.OFFLINE : gameStr &= "OFFLINE"
-            Case FunctionPool.Mode.COM : gameStr &= "COMS"
-            Case FunctionPool.Mode.HUM : gameStr &= "HUMANS"
-            Case FunctionPool.Mode.ONLINE : gameStr &= "ONLINE"
-        End Select
-        If mode = FunctionPool.Mode.COM Or mode = FunctionPool.Mode.OFFLINE Then gameStr &= vbCrLf & " -AI Difficulty is set to " & AI_difficulty
-        gameStr &= vbCrLf & " -Player " & turn & " begins." & vbCrLf
-
-        If mode = FunctionPool.Mode.ONLINE Then
-            Dim hostName = Dns.GetHostName()
-            Dim addresses As IPAddress() = Dns.GetHostEntry(hostName).AddressList()
-            For Each hostAdr As IPAddress In addresses
-                gameStr &= vbCrLf & "Name: " & hostName & " IP Address: " & hostAdr.ToString()
-            Next
-        End If
-
-        gameView.WriteToLog(gameStr)
+        PrintGameIntro()
     End Sub
 
     Private Sub OnlineGameSetup()
@@ -89,6 +96,8 @@ Public Class GameModel
         Else
             SetupServerGame()
         End If
+
+        PrintGameIntro()
     End Sub
 
     Private Sub SetupServerGame()
@@ -112,8 +121,21 @@ Public Class GameModel
 
         'Randomize()
         turn = Int((4) * Rnd())
-        wc.SendToClients("BOARD:test")
+
+        Dim deckStr As String = GetDeckString(deck)
+        Dim usernames As String = dnsModel.getUsername & "," & wc.GetClientUsernames
+
+        wc.SendToClients("GAMEINFO:" & turn & " " & deckStr & " " & usernames)
+
     End Sub
+
+    Private Function GetDeckString(deck As Deck) As String
+        Dim res As String = ""
+        For Each card As Card In deck.GetCards()
+            res &= card.GetSuit & "_" & card.GetValue & "-"
+        Next
+        Return res
+    End Function
 
     Private Sub GameLoop()
         moveThread = New Thread(AddressOf players(turn).GetMove)
@@ -147,6 +169,9 @@ Public Class GameModel
         Return players(index).GetHandCards
     End Function
 
+    Public Sub SetTurn(turn As Integer)
+        Me.turn = turn
+    End Sub
     Public Function GetTurn() As Integer
         Return turn
     End Function

@@ -40,4 +40,8 @@
     Public Function GetCard(index As Integer) As Card
         Return cards(index)
     End Function
+
+    Public Function GetCards() As Card()
+        Return cards
+    End Function
 End Class

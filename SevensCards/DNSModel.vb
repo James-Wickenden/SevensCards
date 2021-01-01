@@ -1,5 +1,6 @@
 ﻿Imports System.Net
 Imports System.Net.Sockets
+Imports Microsoft.VisualBasic.ApplicationServices
 
 Public Class DNSModel
     Private dnsView As DNSView
@@ -47,7 +48,7 @@ Public Class DNSModel
         If wc Is Nothing Then Exit Sub
         dnsView.WriteToLog(dnsView.clientInfo, "Beginning game...")
         wc.SendToClients("START:")
-        Dim gameModel As New GameModel(dnsView, FunctionPool.Mode.ONLINE, wc)
+        Dim tmpGM As New GameModel(dnsView, FunctionPool.Mode.ONLINE, wc, Me)
     End Sub
 
     Public Sub HandleIncomingMessage(client As TcpClient, rawData As String)
@@ -64,13 +65,18 @@ Public Class DNSModel
             Case "START"
                 BeginGame()
                 'Threading.ThreadPool.QueueUserWorkItem(AddressOf Connected)
-            Case "BOARD"
+            Case "GAMEINFO"
                 ParseSetupBoard(rawData.Split(":")(1))
         End Select
     End Sub
 
-    Private Sub ParseSetupBoard(boardStr As String)
-        MsgBox(boardStr)
+    Private Sub ParseSetupBoard(gameInfo As String)
+        MsgBox(gameInfo)
+        Dim infos() As String = gameInfo.Split(" ")
+        Dim int_turn As Integer = CInt(infos(0))
+        If gameModel IsNot Nothing Then
+            gameModel.SetTurn(int_turn)
+        End If
     End Sub
 
     Private Sub ServerDistributeUpdatedUsernames(client As TcpClient, rawData As String)
@@ -80,6 +86,10 @@ Public Class DNSModel
         UpdatePlayers(ParseUsernames(usernames))
         wc.SendToClients("USERNAMES:" & usernames)
     End Sub
+
+    Public Function GetUsername() As String
+        Return username
+    End Function
 
     Public Sub SetUsername(username As String)
         Me.username = username
