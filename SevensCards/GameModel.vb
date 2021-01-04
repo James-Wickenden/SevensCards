@@ -125,7 +125,7 @@ Public Class GameModel
         Dim deckStr As String = GetDeckString(deck)
         Dim usernames As String = dnsModel.getUsername & "," & wc.GetClientUsernames
 
-        wc.SendToClients("GAMEINFO:" & turn & " " & deckStr & " " & usernames)
+        wc.SendToClients("GAMEINFO:" & turn & " " & deckStr & " " & usernames & " ")
 
     End Sub
 
@@ -169,10 +169,19 @@ Public Class GameModel
         Return players(index).GetHandCards
     End Function
 
-    Public Sub SetHands(hands() As Hand)
+    Public Sub SetClientsPlayers(hands() As Hand, myPlayerIndex As Integer)
         For i As Integer = 0 To players.Length - 1
+            If Not i = myPlayerIndex Then
+                players(i) = New Player_WEB()
+                players(i).SetCanSeeHand(False)
+            Else
+                players(i) = New Player_HUM()
+                players(i).SetCanSeeHand(True)
+            End If
             players(i).SetHand(hands(i))
+            players(i).SetCallback(AddressOf ResultCallback)
         Next
+        Threading.Thread.Sleep(1)
     End Sub
 
     Public Sub SetTurn(turn As Integer)

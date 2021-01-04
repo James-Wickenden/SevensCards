@@ -71,7 +71,6 @@ Public Class DNSModel
     End Sub
 
     Private Sub ParseSetupBoard(gameInfo As String)
-        MsgBox(gameInfo)
         Dim infos() As String = gameInfo.Split(" ")
         Dim int_turn As Integer = CInt(infos(0))
         If gameModel IsNot Nothing Then
@@ -82,7 +81,7 @@ Public Class DNSModel
         Dim refDeck As New Deck
         Dim resHands As New List(Of Hand)
 
-        For i As Integer = 0 To deck.Length - 1
+        For i As Integer = 0 To deck.Length - 2
             Dim cardInfo() As String = deck(i).Split("_")
             Dim c As Card = Nothing
             For Each refCard As Card In refDeck.GetCards
@@ -91,19 +90,21 @@ Public Class DNSModel
                     c.SetFaceDown()
                 End If
             Next
-            If i > 0 And (i Mod 12 = 0) Then resHands.Add(New Hand({}))
+            If i Mod 12 = 0 Then resHands.Add(New Hand({}))
             If c IsNot Nothing Then resHands.Last.AddCard(c)
         Next
 
+        Dim myPlayerIndex As Integer = 0
         For i As Integer = 0 To infos(2).Split(",").Length - 1
             If username = infos(2).Split(",")(i) Then
+                myPlayerIndex = i
                 For Each card As Card In resHands(i).GetHand
                     card.SetFaceUp()
                 Next
             End If
         Next
 
-        gameModel.SetHands(resHands.ToArray)
+        gameModel.SetClientsPlayers(resHands.ToArray, myPlayerIndex)
         wc.SetClientGameReady(True)
     End Sub
 
