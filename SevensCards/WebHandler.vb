@@ -124,14 +124,14 @@ public Module WebHandler
             RX = New StreamReader(Client.GetStream)
             TX = New StreamWriter(Client.GetStream)
             If RX.BaseStream.CanRead Then
-                'Try
-                While RX.BaseStream.CanRead
+                Try
+                    While RX.BaseStream.CanRead
                         Dim RawData As String = RX.ReadLine
                         dnsModel.HandleIncomingMessage(Client, RawData)
                     End While
-                'Catch ex As Exception
-                '    Client.Close()
-                'End Try
+                Catch ex As Exception
+                    Client.Close()
+                End Try
             End If
         End Sub
 
@@ -144,6 +144,7 @@ public Module WebHandler
                         Dim RawData As String = RX.ReadLine
                         WriteToLog("Server >> " & RawData)
                         dnsModel.HandleIncomingMessage(Client, RawData)
+                        If RawData = "START:" Then Exit Sub
                     End While
                 Catch ex As Exception
                     Client.Close()

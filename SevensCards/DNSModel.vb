@@ -1,5 +1,6 @@
 ﻿Imports System.Net
 Imports System.Net.Sockets
+Imports System.Threading
 Imports Microsoft.VisualBasic.ApplicationServices
 
 Public Class DNSModel
@@ -63,10 +64,14 @@ Public Class DNSModel
                 UpdatePlayers(ParseUsernames(usernames))
                 wc.SendToClients("USERNAMES:" & usernames)
             Case "START"
-                BeginGame()
+                Dim moveThread As Thread = New Thread(AddressOf BeginGame)
+                moveThread.Start()
+                'Threading.ThreadPool.QueueUserWorkItem(AddressOf BeginGame)
                 'Threading.ThreadPool.QueueUserWorkItem(AddressOf Connected)
             Case "GAMEINFO"
                 ParseSetupBoard(rawData.Split(":")(1))
+            Case "PLAYCARD"
+                If gameModel IsNot Nothing Then gameModel.ReceiveOnlineMove(rawData.Split(":")(1))
         End Select
     End Sub
 

@@ -7,11 +7,21 @@
     Protected callback As FunctionPool.moveToBeMade
     Protected skipMove As Boolean = False
     Protected isMyMove As Boolean = False
+
+    Protected isWeb As Boolean = False
     Public MustOverride Sub GetMove()
 
     Public Sub Skip()
         skipMove = True
     End Sub
+
+    Public Function GetIsWeb() As Boolean
+        Return isWeb
+    End Function
+
+    Public Function GetIsMyMove() As Boolean
+        Return isMyMove
+    End Function
 
     Public Sub SetIsMyMove(isMyMove As Boolean)
         Me.isMyMove = isMyMove

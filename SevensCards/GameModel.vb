@@ -105,7 +105,13 @@ Public Class GameModel
         deck.ShuffleDeck()
 
         For i As Integer = 0 To 3
-            players(i) = New Player_COM(AI_difficulty)
+            If i = 0 Then
+                players(i) = New Player_HUM
+            ElseIf i < wc.GetClientUsernames.Split(",").Length Then
+                players(i) = New Player_WEB
+            Else
+                players(i) = New Player_COM(AI_difficulty)
+            End If
             players(i).SetCanSeeHand(True)
             gameView.KillSkip()
 
@@ -125,7 +131,7 @@ Public Class GameModel
         Dim deckStr As String = GetDeckString(deck)
         Dim usernames As String = dnsModel.getUsername & "," & wc.GetClientUsernames
 
-        wc.SendToClients("GAMEINFO:" & turn & " " & deckStr & " " & usernames & " ")
+        wc.SendToClients("GAMEINFO:" & turn & " " & deckStr & " " & usernames)
 
     End Sub
 
@@ -141,6 +147,18 @@ Public Class GameModel
         moveThread = New Thread(AddressOf players(turn).GetMove)
         moveThread.Start()
         players(turn).SetIsMyMove(True)
+    End Sub
+
+    Public Sub ReceiveOnlineMove(rawData As String)
+        For Each player As Player In players
+            If player.GetIsMyMove Then
+                Try
+                    Dim webP As Player_WEB = player
+                    webP.RecieveWebMove(rawData)
+                Catch ex As Exception
+                End Try
+            End If
+        Next
     End Sub
 
     Public Sub GameClose()
@@ -179,9 +197,9 @@ Public Class GameModel
                 players(i).SetCanSeeHand(True)
             End If
             players(i).SetHand(hands(i))
+            players(i).GetHand.SortHand()
             players(i).SetCallback(AddressOf ResultCallback)
         Next
-        Threading.Thread.Sleep(1)
     End Sub
 
     Public Sub SetTurn(turn As Integer)
@@ -243,6 +261,21 @@ Public Class GameModel
 
         gameView.WriteToLog(moveStr)
         If finisherStr <> "" Then gameView.WriteToLog(finisherStr)
+
+        If mode = FunctionPool.Mode.ONLINE Then
+            Dim cardWebStr As String = "PASS"
+            If card IsNot Nothing Then cardWebStr = card.GetSuit & "_" & card.GetValue
+            If Not players(turn).GetIsWeb Then
+                If wc.GetIsClient Then
+                    wc.SendToServer("PLAYCARD:" & cardWebStr)
+                Else
+                    wc.SendToClients("PLAYCARD:" & cardWebStr)
+                End If
+            Else
+                If Not wc.GetIsClient Then wc.SendToClients("PLAYCARD:" & cardWebStr)
+            End If
+        End If
+
 
         turn = newTurn
 
