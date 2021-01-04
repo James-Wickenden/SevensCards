@@ -169,6 +169,12 @@ Public Class GameModel
         Return players(index).GetHandCards
     End Function
 
+    Public Sub SetHands(hands() As Hand)
+        For i As Integer = 0 To players.Length - 1
+            players(i).SetHand(hands(i))
+        Next
+    End Sub
+
     Public Sub SetTurn(turn As Integer)
         Me.turn = turn
     End Sub

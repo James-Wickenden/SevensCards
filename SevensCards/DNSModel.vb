@@ -77,6 +77,34 @@ Public Class DNSModel
         If gameModel IsNot Nothing Then
             gameModel.SetTurn(int_turn)
         End If
+
+        Dim deck() As String = infos(1).Split("-")
+        Dim refDeck As New Deck
+        Dim resHands As New List(Of Hand)
+
+        For i As Integer = 0 To deck.Length - 1
+            Dim cardInfo() As String = deck(i).Split("_")
+            Dim c As Card = Nothing
+            For Each refCard As Card In refDeck.GetCards
+                If refCard.GetSuit = cardInfo(0) And refCard.GetValue = cardInfo(1) Then
+                    c = refCard
+                    c.SetFaceDown()
+                End If
+            Next
+            If i > 0 And (i Mod 12 = 0) Then resHands.Add(New Hand({}))
+            If c IsNot Nothing Then resHands.Last.AddCard(c)
+        Next
+
+        For i As Integer = 0 To infos(2).Split(",").Length - 1
+            If username = infos(2).Split(",")(i) Then
+                For Each card As Card In resHands(i).GetHand
+                    card.SetFaceUp()
+                Next
+            End If
+        Next
+
+        gameModel.SetHands(resHands.ToArray)
+        wc.SetClientGameReady(True)
     End Sub
 
     Private Sub ServerDistributeUpdatedUsernames(client As TcpClient, rawData As String)
