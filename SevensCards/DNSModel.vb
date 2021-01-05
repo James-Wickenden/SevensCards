@@ -8,6 +8,7 @@ Public Class DNSModel
     Private wc As WebController
     Private username As String
     Private gameModel As GameModel
+    Private readyClients As Integer = 0
 
     Public Sub New(menu As Menu)
         dnsView = New DNSView()
@@ -19,6 +20,13 @@ Public Class DNSModel
     Public Sub SetGameModel(gm As GameModel)
         gameModel = gm
     End Sub
+
+    Public Sub SetReadyClients(rc As Integer)
+        readyClients = rc
+    End Sub
+    Public Function GetReadyClients() As Integer
+        Return readyClients
+    End Function
 
     Public Sub StartServer()
         wc = New WebController(False, Me)
@@ -70,7 +78,10 @@ Public Class DNSModel
             Case "GAMEINFO"
                 ParseSetupBoard(rawData.Split(":")(1))
             Case "PLAYCARD"
+                'MsgBox(rawData & " " & client.Client.RemoteEndPoint.ToString)
                 If gameModel IsNot Nothing Then gameModel.ReceiveOnlineMove(rawData.Split(":")(1))
+            Case "READYCLIENT"
+                readyClients += 1
         End Select
     End Sub
 

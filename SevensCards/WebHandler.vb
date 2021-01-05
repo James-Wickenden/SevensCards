@@ -5,7 +5,10 @@ Imports System.Net.Sockets
 
 public Module WebHandler
     Private Sub WTL(dnsModel As DNSModel, msg As String, isClient As Boolean)
-        dnsModel.WriteToLog(msg, isClient)
+        Try
+            dnsModel.WriteToLog(msg, isClient)
+        Catch ex As Exception
+        End Try
     End Sub
 
     Public Class WebController
@@ -50,7 +53,11 @@ public Module WebHandler
         End Function
 
         Public Sub Reconnect()
-            If client IsNot Nothing Then client.Reconnect()
+            If isClient Then
+                If client IsNot Nothing Then client.Reconnect()
+            Else
+                If server IsNot Nothing Then server.Reconnect()
+            End If
         End Sub
 
         Public Sub SendToServer(data As String)
@@ -257,7 +264,6 @@ public Module WebHandler
                     Threading.ThreadPool.QueueUserWorkItem(AddressOf ClientHandler)
                 End If
                 If Clients.Count >= 3 Then
-                    MsgBox("Lobby overflow")
                     Dim TX_C As New StreamWriter(Client.GetStream)
                     TX_C.WriteLine("Lobby is full.")
                     TX_C.Flush()
@@ -296,6 +302,26 @@ public Module WebHandler
 
         End Sub
 
+        Private Sub ReconnectClient(Client As TcpClient)
+            Dim TX As New StreamWriter(Client.GetStream)
+            Dim RX As New StreamReader(Client.GetStream)
+            If RX.BaseStream.CanRead Then
+                While RX.BaseStream.CanRead
+                    Try
+                        Dim RawData As String = RX.ReadLine
+                        dnsModel.HandleIncomingMessage(Client, RawData)
+                    Catch ex As Exception
+                        RemoveClient(Client)
+                    End Try
+                End While
+            End If
+        End Sub
+
+        Public Sub Reconnect()
+            For Each client As TcpClient In Clients
+                Threading.ThreadPool.QueueUserWorkItem(AddressOf ReconnectClient, client)
+            Next
+        End Sub
     End Class
 
 End Module

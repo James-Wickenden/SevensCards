@@ -16,14 +16,12 @@ The online repository can be found at <https://github.com/James-Wickenden/Sevens
 TODO:
 
 - Implement networking (WIP)
-- Game loading bar
-- Implement difficulty slider for COM players
+- Implement difficulty slider for COM players in local play
 - Clean up GameModel & GameView interfaces
-- Variable player counts
 - Native UI scaling
 
 BUGS:
 
-- Freezing while loading/ solve with loading bar?
-- Solve with extra card attributes/constructors or case-by-case handling when calling
-- WEB Games can freeze if a COM player moves first (?)
+- Desync issue between clients and players
+- The host has no skip button
+- Likely issue when joining a server when game in session; will need a case to handle it.

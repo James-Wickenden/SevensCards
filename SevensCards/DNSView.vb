@@ -17,13 +17,15 @@ Public Class DNSView
     End Sub
 
     Public Sub WriteToLog(log As TextBox, str As String)
-        Me.Invoke(Sub()
-                      If log Is Nothing Then Exit Sub
-                      log.Text = log.Text.Remove(log.Text.Count - 1)
-                      log.Text &= " " & str & vbCrLf & ">"
-                      log.SelectionStart = log.Text.Length - 1
-                      log.ScrollToCaret()
-                  End Sub)
+        Try
+            Me.Invoke(Sub()
+                          log.Text = log.Text.Remove(log.Text.Count - 1)
+                          log.Text &= " " & str & vbCrLf & ">"
+                          log.SelectionStart = log.Text.Length - 1
+                          log.ScrollToCaret()
+                      End Sub)
+        Catch ex As Exception
+        End Try
     End Sub
 
     Private Sub PanelSetup()

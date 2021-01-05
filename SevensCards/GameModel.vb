@@ -30,6 +30,17 @@ Public Class GameModel
             OnlineGameSetup()
         End If
         gameView.DrawView(board, players, turn, mode)
+
+        If Me.mode = FunctionPool.Mode.ONLINE Then
+            If wc.GetIsClient Then
+                wc.SendToServer("READYCLIENT:")
+            Else
+                While dnsModel.GetReadyClients <> wc.GetClientUsernames.Split(",").Length - 1
+                    Threading.Thread.Sleep(200)
+                End While
+            End If
+        End If
+
         GameLoop()
     End Sub
 
@@ -94,6 +105,7 @@ Public Class GameModel
                 gameView.WriteToLog("Waiting for the server to set up the game...")
             End While
         Else
+            wc.Reconnect()
             SetupServerGame()
         End If
 
@@ -127,12 +139,11 @@ Public Class GameModel
 
         'Randomize()
         turn = Int((4) * Rnd())
-
+        turn = 1
         Dim deckStr As String = GetDeckString(deck)
         Dim usernames As String = dnsModel.getUsername & "," & wc.GetClientUsernames
 
         wc.SendToClients("GAMEINFO:" & turn & " " & deckStr & " " & usernames)
-
     End Sub
 
     Private Function GetDeckString(deck As Deck) As String
@@ -150,11 +161,17 @@ Public Class GameModel
     End Sub
 
     Public Sub ReceiveOnlineMove(rawData As String)
+        Dim moveStr As String = rawData
+        If moveStr.Contains("-") Then
+            If moveStr.Split("-")(1) = dnsModel.GetUsername Then Exit Sub
+            moveStr = moveStr.Split("-")(0)
+        End If
+
         For Each player As Player In players
             If player.GetIsMyMove Then
                 Try
                     Dim webP As Player_WEB = player
-                    webP.RecieveWebMove(rawData)
+                    webP.RecieveWebMove(moveStr)
                 Catch ex As Exception
                 End Try
             End If
@@ -267,15 +284,19 @@ Public Class GameModel
             If card IsNot Nothing Then cardWebStr = card.GetSuit & "_" & card.GetValue
             If Not players(turn).GetIsWeb Then
                 If wc.GetIsClient Then
+                    'gameView.WriteToLog("Sending move to server...")
                     wc.SendToServer("PLAYCARD:" & cardWebStr)
                 Else
                     wc.SendToClients("PLAYCARD:" & cardWebStr)
                 End If
             Else
-                If Not wc.GetIsClient Then wc.SendToClients("PLAYCARD:" & cardWebStr)
+                If Not wc.GetIsClient Then
+                    Dim usernames As String = dnsModel.GetUsername & "," & wc.GetClientUsernames
+                    Dim playerUsername As String = usernames.Split(",")(turn)
+                    wc.SendToClients("PLAYCARD:" & cardWebStr & "-" & playerUsername)
+                End If
             End If
         End If
-
 
         turn = newTurn
 
