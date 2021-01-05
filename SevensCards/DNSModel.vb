@@ -64,10 +64,9 @@ Public Class DNSModel
                 UpdatePlayers(ParseUsernames(usernames))
                 wc.SendToClients("USERNAMES:" & usernames)
             Case "START"
-                Dim moveThread As Thread = New Thread(AddressOf BeginGame)
-                moveThread.Start()
-                'Threading.ThreadPool.QueueUserWorkItem(AddressOf BeginGame)
-                'Threading.ThreadPool.QueueUserWorkItem(AddressOf Connected)
+                dnsView.Invoke(Sub()
+                                   BeginGame()
+                               End Sub)
             Case "GAMEINFO"
                 ParseSetupBoard(rawData.Split(":")(1))
             Case "PLAYCARD"
