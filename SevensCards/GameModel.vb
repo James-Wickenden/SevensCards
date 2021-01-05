@@ -35,9 +35,10 @@ Public Class GameModel
             If wc.GetIsClient Then
                 wc.SendToServer("READYCLIENT:")
             Else
-                While dnsModel.GetReadyClients <> wc.GetClientUsernames.Split(",").Length - 1
-                    Threading.Thread.Sleep(200)
-                End While
+                'While dnsModel.GetReadyClients <> wc.GetClientUsernames.Split(",").Length - 1
+                ' Threading.Thread.Sleep(200)
+                'End While
+                'dnsModel.SetReadyClients(0)
             End If
         End If
 
@@ -155,6 +156,15 @@ Public Class GameModel
     End Function
 
     Private Sub GameLoop()
+        If mode = FunctionPool.Mode.ONLINE Then
+            If Not wc.GetIsClient Then
+                While dnsModel.GetReadyClients < wc.GetClientUsernames.Split(",").Length - 1
+                    Threading.Thread.Sleep(200)
+                End While
+                dnsModel.SetReadyClients(0)
+            End If
+        End If
+
         moveThread = New Thread(AddressOf players(turn).GetMove)
         moveThread.Start()
         players(turn).SetIsMyMove(True)
@@ -242,6 +252,14 @@ Public Class GameModel
         players(turn).SetPlayedCard(card)
     End Sub
 
+    Private Sub SendMoveToClients(cardStr As String, player As String)
+        While dnsModel.GetReadyClients < wc.GetClientUsernames.Split(",").Length - 1
+            Threading.Thread.Sleep(200)
+        End While
+        dnsModel.SetReadyClients(0)
+        wc.SendToClients("PLAYCARD:" & cardStr & "-" & player)
+    End Sub
+
     Public Sub Move(card As Card)
         Dim skipped As Boolean = False
         If card Is Nothing Then skipped = True
@@ -284,18 +302,20 @@ Public Class GameModel
             If card IsNot Nothing Then cardWebStr = card.GetSuit & "_" & card.GetValue
             If Not players(turn).GetIsWeb Then
                 If wc.GetIsClient Then
-                    'gameView.WriteToLog("Sending move to server...")
                     wc.SendToServer("PLAYCARD:" & cardWebStr)
                 Else
+                    'SendMoveToClients(cardWebStr, "COM")
                     wc.SendToClients("PLAYCARD:" & cardWebStr)
                 End If
             Else
                 If Not wc.GetIsClient Then
                     Dim usernames As String = dnsModel.GetUsername & "," & wc.GetClientUsernames
                     Dim playerUsername As String = usernames.Split(",")(turn)
+                    'SendMoveToClients(cardWebStr, playerUsername)
                     wc.SendToClients("PLAYCARD:" & cardWebStr & "-" & playerUsername)
                 End If
             End If
+            If wc.GetIsClient Then wc.SendToServer("READYCLIENT:")
         End If
 
         turn = newTurn

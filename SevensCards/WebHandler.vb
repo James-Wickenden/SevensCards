@@ -250,11 +250,16 @@ public Module WebHandler
         End Sub
 
         Private Sub RemoveClient(Client As TcpClient)
-            WriteToLog("Client removed: " & Client.Client.RemoteEndPoint.ToString)
-            Usernames.Remove(Client.Client.RemoteEndPoint.ToString)
-            Client.Close()
-            Clients.Remove(Client)
-            dnsModel.HandleIncomingMessage(Nothing, "REMOVED:")
+            Try
+                WriteToLog("Client removed: " & Client.Client.RemoteEndPoint.ToString)
+                Usernames.Remove(Client.Client.RemoteEndPoint.ToString)
+                Client.Close()
+                Clients.Remove(Client)
+                dnsModel.HandleIncomingMessage(Nothing, "REMOVED:")
+            Catch ex As Exception
+
+            End Try
+
         End Sub
 
         Private Sub ClientHandler()
