@@ -55,13 +55,13 @@ Public Class GameModel
         If Not mode = FunctionPool.Mode.HUM Then gameStr &= vbCrLf & " -AI Difficulty is set to " & AI_difficulty
         gameStr &= vbCrLf & GetNameRef(turn) & " begins." & vbCrLf
 
-        If mode = FunctionPool.Mode.ONLINE Then
-            Dim hostName = Dns.GetHostName()
-            Dim addresses As IPAddress() = Dns.GetHostEntry(hostName).AddressList()
-            For Each hostAdr As IPAddress In addresses
-                gameStr &= vbCrLf & "Name: " & hostName & " IP Address: " & hostAdr.ToString()
-            Next
-        End If
+        'If mode = FunctionPool.Mode.ONLINE Then
+        '    Dim hostName = Dns.GetHostName()
+        '    Dim addresses As IPAddress() = Dns.GetHostEntry(hostName).AddressList()
+        '    For Each hostAdr As IPAddress In addresses
+        '        gameStr &= vbCrLf & "Name: " & hostName & " IP Address: " & hostAdr.ToString()
+        '    Next
+        'End If
 
         gameView.WriteToLog(gameStr)
     End Sub
@@ -125,7 +125,6 @@ Public Class GameModel
                 players(i) = New Player_COM(AI_difficulty)
             End If
             players(i).SetCanSeeHand(True)
-            gameView.KillSkip()
 
             players(i).SetCallback(AddressOf ResultCallback)
 
@@ -139,7 +138,6 @@ Public Class GameModel
 
         'Randomize()
         turn = Int((4) * Rnd())
-        turn = 1
         Dim deckStr As String = GetDeckString(deck)
         Dim usernames As String = dnsModel.getUsername & "," & wc.GetClientUsernames
 

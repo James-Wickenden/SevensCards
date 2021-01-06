@@ -22,6 +22,7 @@ TODO:
 
 BUGS:
 
+- No way to change local difficulty
+- Changing server difficulty currently doesn't do anything
 - Stop server joining its own game
-- The host has no skip button
 - Likely issue when joining a server when game in session; will need a case to handle it.
