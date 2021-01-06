@@ -31,6 +31,12 @@ public Module WebHandler
             Return isClient
         End Function
 
+        Public Sub RejectNewServerClients()
+            If Not isClient And server IsNot Nothing Then
+                server.RejectNewConnections = True
+            End If
+        End Sub
+
         Public Sub SetClientGameReady(cgr As Boolean)
             clientGameReady = cgr
         End Sub
@@ -172,6 +178,8 @@ public Module WebHandler
     Private Class Server
         Private ServerStatus As Boolean = False
         Private ServerTrying As Boolean = False
+        Public RejectNewConnections As Boolean = False
+
         Private Server As TcpListener
         Private Clients As New List(Of TcpClient)
         Private Usernames As New Dictionary(Of String, String)
@@ -265,6 +273,7 @@ public Module WebHandler
         Private Sub ClientHandler()
             Try
                 Dim Client As TcpClient = Server.AcceptTcpClient
+                If RejectNewConnections Then Exit Sub
                 If Not ServerTrying Then
                     Threading.ThreadPool.QueueUserWorkItem(AddressOf ClientHandler)
                 End If

@@ -3,37 +3,46 @@
 Public Class Player_WEB
     Inherits Player
 
-    Private webMoveCard As Card
-    Private readyToPlay As Boolean = False
+    Private readyMoves As Queue
 
-    Public Sub New()
+    Public Sub New(readyMoves As Queue)
         isWeb = True
+        Me.readyMoves = readyMoves
     End Sub
 
+    'Public Sub SetReadyMoves(readyMoves As Queue)
+
+    'End Sub
+
     Private Function GetPlayedCard_WEB() As Card
-        webMoveCard = Nothing
-        While Not readyToPlay
+        While readyMoves.Count = 0
             Threading.Thread.Sleep(300)
         End While
 
-        If webMoveCard Is Nothing Then Return Nothing
+        Dim moveStr As String = readyMoves.Dequeue
 
+        If moveStr = "SKIP" Then Return Nothing
         For Each card As Card In hand.GetHand
-            If card.GetValue = webMoveCard.GetValue And card.GetSuit = webMoveCard.GetSuit Then
+            If card.GetSuit = moveStr.Split("_")(0) And card.GetValue = moveStr.Split("_")(1) Then
                 If card.GetValid Then Return card
             End If
         Next
-        If webMoveCard.GetValid Then Return webMoveCard
+
         Return Nothing
     End Function
 
-    Public Sub RecieveWebMove(rawData As String)
-        If Not rawData = "SKIP" Then
-            Dim tmpCard As New Card(rawData.Split("_")(0), rawData.Split("_")(1), False)
-            webMoveCard = tmpCard
-        End If
-        readyToPlay = True
-    End Sub
+    'Public Sub RecieveWebMove(q As Queue)
+    '    While q.Count = 0
+    '        Threading.Thread.Sleep(300)
+    '    End While
+    '    Dim moveStr As String = q.Dequeue
+
+    '    If Not moveStr = "SKIP" Then
+    '        Dim tmpCard As New Card(moveStr.Split("_")(0), moveStr.Split("_")(1), False)
+    '        webMoveCard = tmpCard
+    '    End If
+    '    readyToPlay = True
+    'End Sub
 
     Public Overrides Sub GetMove()
         Dim card As Card = GetPlayedCard_WEB()

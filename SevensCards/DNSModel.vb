@@ -9,6 +9,7 @@ Public Class DNSModel
     Private username As String
     Private gameModel As GameModel
     Private readyClients As Integer = 0
+    Private readyMoves As New Queue()
 
     Public Sub New(menu As Menu)
         dnsView = New DNSView()
@@ -21,11 +22,12 @@ Public Class DNSModel
         gameModel = gm
     End Sub
 
-    Public Sub SetReadyClients(rc As Integer)
-        readyClients = rc
-    End Sub
     Public Function GetReadyClients() As Integer
         Return readyClients
+    End Function
+
+    Public Function GetReadyMoves() As Queue
+        Return readyMoves
     End Function
 
     Public Sub StartServer()
@@ -78,11 +80,23 @@ Public Class DNSModel
             Case "GAMEINFO"
                 ParseSetupBoard(rawData.Split(":")(1))
             Case "PLAYCARD"
-                'MsgBox(rawData & " " & client.Client.RemoteEndPoint.ToString)
-                If gameModel IsNot Nothing Then gameModel.ReceiveOnlineMove(rawData.Split(":")(1))
+                ReceiveOnlineMove(rawData.Split(":")(1))
             Case "READYCLIENT"
                 readyClients += 1
         End Select
+    End Sub
+
+    Private Sub ReceiveOnlineMove(rawData As String)
+        Dim moveStr As String = rawData
+
+        If moveStr.Contains("-") Then
+            If moveStr.Split("-")(1) = username Then Exit Sub
+            moveStr = moveStr.Split("-")(0)
+        End If
+
+        readyMoves.Enqueue(moveStr)
+
+        'If gameModel IsNot Nothing Then gameModel.ReceiveOnlineMove(moveStr)
     End Sub
 
     Private Sub ParseSetupBoard(gameInfo As String)
