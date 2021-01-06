@@ -22,6 +22,6 @@ TODO:
 
 BUGS:
 
-- Desync issue between clients and players
+- Stop server joining its own game
 - The host has no skip button
 - Likely issue when joining a server when game in session; will need a case to handle it.

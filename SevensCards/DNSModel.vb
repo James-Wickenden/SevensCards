@@ -7,6 +7,7 @@ Public Class DNSModel
     Private dnsView As DNSView
     Private wc As WebController
     Private username As String
+    Private playerNames() As String = {}
     Private gameModel As GameModel
     Private readyClients As Integer = 0
     Private readyMoves As New Queue()
@@ -22,8 +23,16 @@ Public Class DNSModel
         gameModel = gm
     End Sub
 
+    Private Sub SetUsernames(usernames() As String)
+        Me.playerNames = usernames
+    End Sub
+
     Public Function GetReadyClients() As Integer
         Return readyClients
+    End Function
+
+    Public Function GetUsernames() As String()
+        Return playerNames
     End Function
 
     Public Function GetReadyMoves() As Queue
@@ -44,15 +53,21 @@ Public Class DNSModel
     End Function
 
     Private Sub UpdatePlayers(usernames() As String)
+        Dim usernamesRes As New List(Of String)
+        Dim COMcount As Integer = 0
         For i As Integer = 0 To dnsView.playerNames.Length - 1
             If i <= usernames.Length - 1 Then
                 dnsView.playerNames(i).Text = usernames(i)
                 dnsView.playerNames(i).ForeColor = Color.Black
+                usernamesRes.Add(usernames(i))
             Else
                 dnsView.playerNames(i).Text = "COM"
                 dnsView.playerNames(i).ForeColor = Color.Red
+                usernamesRes.Add("COM_" & COMcount)
+                COMcount += 1
             End If
         Next
+        SetUsernames(usernamesRes.ToArray)
     End Sub
 
     Public Sub BeginGame()

@@ -53,7 +53,7 @@ Public Class GameModel
             Case FunctionPool.Mode.ONLINE : gameStr &= "ONLINE"
         End Select
         If Not mode = FunctionPool.Mode.HUM Then gameStr &= vbCrLf & " -AI Difficulty is set to " & AI_difficulty
-        gameStr &= vbCrLf & " -Player " & turn & " begins." & vbCrLf
+        gameStr &= vbCrLf & GetNameRef(turn) & " begins." & vbCrLf
 
         If mode = FunctionPool.Mode.ONLINE Then
             Dim hostName = Dns.GetHostName()
@@ -160,19 +160,6 @@ Public Class GameModel
         players(turn).SetIsMyMove(True)
     End Sub
 
-    'Public Sub ReceiveOnlineMove(rawData As String)
-    '    Dim moveStr As String = rawData
-    '    For Each player As Player In players
-    '        If player.GetIsMyMove Then
-    '            Try
-    '                Dim webP As Player_WEB = player
-    '                webP.RecieveWebMove(moveStr)
-    '            Catch ex As Exception
-    '            End Try
-    '        End If
-    '    Next
-    'End Sub
-
     Public Sub GameClose()
 
         End
@@ -237,6 +224,15 @@ Public Class GameModel
         players(turn).SetPlayedCard(card)
     End Sub
 
+    Private Function GetNameRef(turn As Integer) As String
+        If mode = FunctionPool.Mode.ONLINE Then
+            Return dnsModel.GetUsernames(turn)
+        Else
+            Return "Player " & turn
+        End If
+        Return "_PLAYER_NOT_FOUND_"
+    End Function
+
     Public Sub Move(card As Card)
         Dim skipped As Boolean = False
         If card Is Nothing Then skipped = True
@@ -261,16 +257,16 @@ Public Class GameModel
 
         If players(turn).GetHandCards.Count = 0 Then
             finishers += 1
-            finisherStr = "   Player " & turn & " finishes in position " & finishers & "!"
+            finisherStr = "   " & GetNameRef(turn) & " finishes in position " & finishers & "!"
             If finishers = 4 Then finisherStr &= vbCrLf & vbCrLf & "    GAME OVER!"
             gameView.Finisher(finishers, turn)
         End If
 
         Dim cardStr As String = "PASS"
         If card IsNot Nothing Then cardStr = card.GetCardText
-        moveStr = "Player " & turn & " plays " & cardStr
-        If turn >= newTurn Then moveStr &= vbCrLf
+        moveStr = GetNameRef(turn) & " plays " & cardStr
 
+        If turn >= newTurn Then moveStr &= vbCrLf
         gameView.WriteToLog(moveStr)
         If finisherStr <> "" Then gameView.WriteToLog(finisherStr)
 
