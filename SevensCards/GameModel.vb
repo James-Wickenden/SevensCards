@@ -10,16 +10,17 @@ Public Class GameModel
     Private finishers As Integer = 0
     Private moveThread As Threading.Thread
     Private mode As FunctionPool.Mode
-    Private AI_difficulty As Integer = 2
+    Private AI_difficulty As Integer
     Private wc As WebController
     Private dnsModel As DNSModel
 
-    Public Sub New(menu As Form, mode As Integer, Optional wc As WebController = Nothing, Optional dnsModel As DNSModel = Nothing)
+    Public Sub New(menu As Form, mode As Integer, Optional wc As WebController = Nothing, Optional dnsModel As DNSModel = Nothing, Optional difficulty As Integer = 1)
         Me.mode = mode
         gameView = New GameView()
         gameView.SetGameModel(Me)
         gameView.Show()
         menu.Close()
+        AI_difficulty = difficulty
 
         Me.wc = wc
         Me.dnsModel = dnsModel
@@ -52,7 +53,12 @@ Public Class GameModel
             Case FunctionPool.Mode.HUM : gameStr &= "HUMANS"
             Case FunctionPool.Mode.ONLINE : gameStr &= "ONLINE"
         End Select
-        If Not mode = FunctionPool.Mode.HUM Then gameStr &= vbCrLf & " -AI Difficulty is set to " & AI_difficulty
+        If Not mode = FunctionPool.Mode.HUM Then
+            gameStr &= vbCrLf & " -AI Difficulty is set to " & AI_difficulty
+            Dim diff_dict As New Dictionary(Of Integer, String) From {{-1, "UNDEF->MEDIUM"}, {0, "EASY"}, {1, "MEDIUM"}, {2, "HARD"}}
+            gameStr &= " (" & diff_dict(AI_difficulty) & ")"
+        End If
+
         gameStr &= vbCrLf & GetNameRef(turn) & " begins." & vbCrLf
 
         'If mode = FunctionPool.Mode.ONLINE Then
@@ -153,8 +159,9 @@ Public Class GameModel
     End Function
 
     Private Sub GameLoop()
-        moveThread = New Thread(AddressOf players(turn).GetMove)
-        moveThread.Start()
+        'moveThread = New Thread(AddressOf players(turn).GetMove)
+        'moveThread.Start()
+        Threading.ThreadPool.QueueUserWorkItem(AddressOf players(turn).GetMove)
         players(turn).SetIsMyMove(True)
     End Sub
 

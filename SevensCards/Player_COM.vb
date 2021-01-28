@@ -3,11 +3,12 @@
     'Difficulty 0: The COM plays whatever valid card it comes across first.
     'Difficulty 1: The COM weighs cards towards the extremities more heavily, and plays to get rid of them above more central plays. 
     'Difficulty 2: The COM weighs cards like mode 1, but also weighs how many cards it can play towards one extremity and plays to that first.
-    Private difficulty As Integer = 2
-    Private brainTicks As Integer = 1
+    Private difficulty As Integer = 1
+    Private brainTicks As Integer = 2000
+    Const TELL_ME_DIFFICULTY = False
 
     Public Sub New(difficulty As Integer)
-        Me.difficulty = difficulty
+        If difficulty > 0 And difficulty < 3 Then Me.difficulty = difficulty
     End Sub
 
     Public Sub SetDifficulty(difficulty As Integer)
@@ -25,6 +26,7 @@
     End Function
 
     Private Function PickCard_0() As Card
+        If TELL_ME_DIFFICULTY Then MsgBox("EASY")
         Dim validCards() As Card = GetValidCards()
         If validCards.Length = 0 Then Return Nothing
 
@@ -33,6 +35,7 @@
     End Function
 
     Private Function PickCard_1() As Card
+        If TELL_ME_DIFFICULTY Then MsgBox("MEDIUM")
         Dim validCards() As Card = GetValidCards()
         If validCards.Length = 0 Then Return Nothing
 
@@ -52,6 +55,7 @@
     End Function
 
     Private Function PickCard_2() As Card
+        If TELL_ME_DIFFICULTY Then MsgBox("HARD")
         Dim validCards() As Card = GetValidCards()
         If validCards.Length = 0 Then Return Nothing
 

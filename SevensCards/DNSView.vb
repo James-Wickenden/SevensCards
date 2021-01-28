@@ -5,6 +5,7 @@ Public Class DNSView
     Private dnsModel As DNSModel
     Public clientInfo, serverInfo As TextBox
     Public playerNames(3) As Label
+    Public AIdifficulty_sel As New ComboBox
 
     Private Sub DNSView_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         CheckForIllegalCrossThreadCalls = False
@@ -134,10 +135,10 @@ Public Class DNSView
         AIdifficulty_lbl.Font = New Font("Arial", 15)
         AIdifficulty_lbl.TextAlign = ContentAlignment.MiddleRight
 
-        Dim AIdifficulty_sel As New ComboBox
         fp.objectHandler.AddObject(hostPanel, AIdifficulty_sel, 20, 160, 30, 120, "")
-        AIdifficulty_sel.Items.AddRange({"Easy", "Medium", "Hard"})
-
+        AIdifficulty_sel.Items.AddRange({"EASY", "MEDIUM", "HARD"})
+        AIdifficulty_sel.SelectedIndex = 1
+        ' AIdifficulty_sel.
         Dim startServer_but As New Button
         fp.objectHandler.AddButton(hostPanel, startServer_but, 70, 20, 30, 120, "Start Server", AddressOf dnsModel.StartServer)
 

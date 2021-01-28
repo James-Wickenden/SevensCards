@@ -74,7 +74,7 @@ Public Class DNSModel
         If wc Is Nothing Then Exit Sub
         dnsView.WriteToLog(dnsView.clientInfo, "Beginning game...")
         wc.SendToClients("START:")
-        Dim tmpGM As New GameModel(dnsView, FunctionPool.Mode.ONLINE, wc, Me)
+        Dim tmpGM As New GameModel(dnsView, FunctionPool.Mode.ONLINE, wc, Me, difficulty:=dnsView.AIdifficulty_sel.SelectedIndex)
     End Sub
 
     Public Sub HandleIncomingMessage(client As TcpClient, rawData As String)
