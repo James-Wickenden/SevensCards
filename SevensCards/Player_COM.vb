@@ -4,7 +4,7 @@
     'Difficulty 1: The COM weighs cards towards the extremities more heavily, and plays to get rid of them above more central plays. 
     'Difficulty 2: The COM weighs cards like mode 1, but also weighs how many cards it can play towards one extremity and plays to that first.
     Private difficulty As Integer = 2
-    Private brainTicks As Integer = 1000
+    Private brainTicks As Integer = 1
 
     Public Sub New(difficulty As Integer)
         Me.difficulty = difficulty

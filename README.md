@@ -18,11 +18,15 @@ TODO:
 - Implement networking (WIP)
 - Implement difficulty slider for COM players in local play
 - Clean up GameModel & GameView interfaces
-- Native UI scaling
+- Native UI scaling (!!)
+
+- Networking:
+  - Case for a client leaving and replacing with a COM
+  - Stop server joining its own game
+  - Case for already having a server running
+  - Case for joining a game in session
 
 BUGS:
 
 - No way to change local difficulty
 - Changing server difficulty currently doesn't do anything
-- Stop server joining its own game
-- Likely issue when joining a server when game in session; will need a case to handle it.
