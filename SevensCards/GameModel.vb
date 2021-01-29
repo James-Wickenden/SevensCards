@@ -59,17 +59,28 @@ Public Class GameModel
             gameStr &= " (" & diff_dict(AI_difficulty) & ")"
         End If
 
-        gameStr &= vbCrLf & GetNameRef(turn) & " begins." & vbCrLf
+        gameStr &= vbCrLf & GetNameRef(turn) & " begins."
+        If mode = FunctionPool.Mode.OFFLINE Then
+            gameStr &= " You are " & GetNameRef(0) & "." & vbCrLf
+        ElseIf mode = FunctionPool.Mode.ONLINE Then
+            Dim myTurn As Integer = 0
+            gameStr &= " You are " & dnsModel.GetUsername & vbCrLf
+        Else
+            gameStr &= vbCrLf
+        End If
 
-        'If mode = FunctionPool.Mode.ONLINE Then
-        '    Dim hostName = Dns.GetHostName()
-        '    Dim addresses As IPAddress() = Dns.GetHostEntry(hostName).AddressList()
-        '    For Each hostAdr As IPAddress In addresses
-        '        gameStr &= vbCrLf & "Name: " & hostName & " IP Address: " & hostAdr.ToString()
-        '    Next
-        'End If
+        If mode = FunctionPool.Mode.ONLINE Then
+            If turn = GetMyTurnIndex() Then gameStr &= "YOU START!" & vbCrLf
+        End If
+            'If mode = FunctionPool.Mode.ONLINE Then
+            '    Dim hostName = Dns.GetHostName()
+            '    Dim addresses As IPAddress() = Dns.GetHostEntry(hostName).AddressList()
+            '    For Each hostAdr As IPAddress In addresses
+            '        gameStr &= vbCrLf & "Name: " & hostName & " IP Address: " & hostAdr.ToString()
+            '    Next
+            'End If
 
-        gameView.WriteToLog(gameStr)
+            gameView.WriteToLog(gameStr)
     End Sub
 
     Private Sub LocalGameSetup()
@@ -144,8 +155,9 @@ Public Class GameModel
 
         'Randomize()
         turn = Int((4) * Rnd())
+        'turn = 0
         Dim deckStr As String = GetDeckString(deck)
-        Dim usernames As String = dnsModel.getUsername & "," & wc.GetClientUsernames
+        Dim usernames As String = dnsModel.GetUsername & "," & wc.GetClientUsernames
 
         wc.SendToClients("GAMEINFO:" & turn & " " & deckStr & " " & usernames)
     End Sub
@@ -156,6 +168,11 @@ Public Class GameModel
             res &= card.GetSuit & "_" & card.GetValue & "-"
         Next
         Return res
+    End Function
+
+    Private Function GetMyTurnIndex() As Integer
+        If mode <> FunctionPool.Mode.ONLINE Then Return -1
+        Return Array.IndexOf(dnsModel.GetUsernames, dnsModel.GetUsername)
     End Function
 
     Private Sub GameLoop()
@@ -271,6 +288,7 @@ Public Class GameModel
         If card IsNot Nothing Then cardStr = card.GetCardText
         moveStr = GetNameRef(turn) & " plays " & cardStr
 
+        If newTurn = GetMyTurnIndex() Then moveStr &= " : ITS YOUR MOVE!"
         If turn >= newTurn Then moveStr &= vbCrLf
         gameView.WriteToLog(moveStr)
         If finisherStr <> "" Then gameView.WriteToLog(finisherStr)

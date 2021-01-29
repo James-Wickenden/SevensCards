@@ -138,7 +138,8 @@ Public Class DNSView
         fp.objectHandler.AddObject(hostPanel, AIdifficulty_sel, 20, 160, 30, 120, "")
         AIdifficulty_sel.Items.AddRange({"EASY", "MEDIUM", "HARD"})
         AIdifficulty_sel.SelectedIndex = 1
-        ' AIdifficulty_sel.
+        AIdifficulty_sel.DropDownStyle = ComboBoxStyle.DropDownList
+
         Dim startServer_but As New Button
         fp.objectHandler.AddButton(hostPanel, startServer_but, 70, 20, 30, 120, "Start Server", AddressOf dnsModel.StartServer)
 

@@ -12,6 +12,7 @@
         fp.objectHandler.AddButton(Me, but_WebGame, 250, 25, 50, 150, "Web Game", AddressOf Load_WebGame)
 
         txt_AI_difficulty.Items.AddRange({"EASY", "MEDIUM", "HARD"})
+        txt_AI_difficulty.DropDownStyle = ComboBoxStyle.DropDownList
         lbl_AI_difficulty.Font = New Font("", 15)
         fp.objectHandler.AddObject(Me, txt_AI_difficulty, 325, 175, 50, 150, "")
         fp.objectHandler.AddObject(Me, lbl_AI_difficulty, 325, 25, 50, 150, "AI Difficulty: ")
