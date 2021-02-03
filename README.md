@@ -22,9 +22,12 @@ TODO:
 - Commenting!!
 
 - Networking:
-  - Case for a client leaving and replacing with a COM
-  - Stop server joining its own game
-  - Case for already having a server running
+  - Case for already having a server running with that IP
   - Case for joining a game in session
-  - Clients need to be told difficulty in board sending
+  - Clients need to be told difficulty during board sending
+  - Case for two clients with the same name!! clients or server players.
+  
+- WIP networking:
   - Grey out start server button if clicked
+  - Stop server joining its own game
+  
