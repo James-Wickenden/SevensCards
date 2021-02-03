@@ -84,10 +84,16 @@ Public Class DNSModel
             Case "USERNAMES"
                 UpdatePlayers(ParseUsernames(rawData.Split(":")(1)))
             Case "REMOVED"
-                If wc.GetIsClient Then Exit Sub
+                If wc.GetIsClient And gameModel IsNot Nothing Then
+                    HandleClientLeavingInSession(rawData.Split(":")(1))
+                    Exit Sub
+                End If
                 Dim usernames As String = username & "," & wc.GetClientUsernames
                 UpdatePlayers(ParseUsernames(usernames))
                 wc.SendToClients("USERNAMES:" & usernames)
+                If gameModel IsNot Nothing Then
+                    HandleClientLeavingInSession(rawData.Split(":")(1))
+                End If
             Case "START"
                 dnsView.Invoke(Sub()
                                    BeginGame()
@@ -99,6 +105,15 @@ Public Class DNSModel
             Case "READYCLIENT"
                 readyClients += 1
         End Select
+    End Sub
+
+    Private Sub HandleClientLeavingInSession(leaver As String)
+        If Not wc.GetIsClient Then
+            wc.SendToClients("REMOVED:" & leaver)
+            gameModel.ServerPlayerToBot(leaver)
+        Else
+            gameModel.WriteToGameLog(leaver & " left. Replacing with a bot...")
+        End If
     End Sub
 
     Private Sub ReceiveOnlineMove(rawData As String)

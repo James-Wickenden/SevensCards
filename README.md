@@ -19,9 +19,12 @@ TODO:
 - Clean up GameModel & GameView interfaces
 - Native UI scaling (!!)
 - Add a guide/help/about w/ git link and instructions
+- Commenting!!
 
 - Networking:
   - Case for a client leaving and replacing with a COM
   - Stop server joining its own game
   - Case for already having a server running
   - Case for joining a game in session
+  - Clients need to be told difficulty in board sending
+  - Grey out start server button if clicked

@@ -255,6 +255,14 @@ Public Class GameModel
         Return "_PLAYER_NOT_FOUND_"
     End Function
 
+    Public Sub WriteToGameLog(msg As String)
+        gameView.WriteToLog(msg)
+    End Sub
+
+    Public Sub ServerPlayerToBot(leaver As String)
+        ' WIP
+    End Sub
+
     Public Sub Move(card As Card)
         Dim skipped As Boolean = False
         If card Is Nothing Then skipped = True
