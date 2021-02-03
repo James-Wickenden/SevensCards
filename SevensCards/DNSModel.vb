@@ -11,6 +11,7 @@ Public Class DNSModel
     Private gameModel As GameModel
     Private readyClients As Integer = 0
     Private readyMoves As New Queue()
+    Private gameEndedPrematurely As Boolean
 
     Public Sub New(menu As Menu)
         dnsView = New DNSView()
@@ -37,6 +38,10 @@ Public Class DNSModel
 
     Public Function GetReadyMoves() As Queue
         Return readyMoves
+    End Function
+
+    Public Function GetGameEndedPrematurely() As Boolean
+        Return gameEndedPrematurely
     End Function
 
     Public Sub StartServer()
@@ -110,10 +115,9 @@ Public Class DNSModel
     Private Sub HandleClientLeavingInSession(leaver As String)
         If Not wc.GetIsClient Then
             wc.SendToClients("REMOVED:" & leaver)
-            gameModel.ServerPlayerToBot(leaver)
-        Else
-            gameModel.WriteToGameLog(leaver & " left. Replacing with a bot...")
         End If
+        gameModel.WriteToGameLog(leaver & " left! The game is ended prematurely.")
+        gameEndedPrematurely = True
     End Sub
 
     Private Sub ReceiveOnlineMove(rawData As String)

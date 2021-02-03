@@ -183,7 +183,7 @@ Public Class GameModel
     End Sub
 
     Public Sub GameClose()
-
+        If Not wc.GetIsClient Then wc.SendToClients("REMOVED:" & dnsModel.GetUsername)
         End
     End Sub
 
@@ -259,11 +259,8 @@ Public Class GameModel
         gameView.WriteToLog(msg)
     End Sub
 
-    Public Sub ServerPlayerToBot(leaver As String)
-        ' WIP
-    End Sub
-
     Public Sub Move(card As Card)
+        If dnsModel.GetGameEndedPrematurely Then Exit Sub
         Dim skipped As Boolean = False
         If card Is Nothing Then skipped = True
 
