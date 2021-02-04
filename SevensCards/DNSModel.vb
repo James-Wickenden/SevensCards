@@ -174,6 +174,7 @@ Public Class DNSModel
         Next
 
         gameModel.SetClientsPlayers(resHands.ToArray, myPlayerIndex)
+        gameModel.SetDifficulty(CInt(infos(3)))
         wc.SetClientGameReady(True)
     End Sub
 

@@ -24,9 +24,9 @@ TODO:
 - Networking:
   - Case for already having a server running with that IP
   - Case for joining a game in session
-  - Clients need to be told difficulty during board sending
-  - Case for two clients with the same name!! clients or server players.
+  - Stop Sever button in lobby
   
 - WIP networking:
-  - Stop server joining its own game
+  - List players in server when starting a web game
+  - Case for two clients with the same name!! clients or server players.
   

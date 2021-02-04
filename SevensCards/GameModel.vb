@@ -159,7 +159,7 @@ Public Class GameModel
         Dim deckStr As String = GetDeckString(deck)
         Dim usernames As String = dnsModel.GetUsername & "," & wc.GetClientUsernames
 
-        wc.SendToClients("GAMEINFO:" & turn & " " & deckStr & " " & usernames)
+        wc.SendToClients("GAMEINFO:" & turn & " " & deckStr & " " & usernames & " " & AI_difficulty)
     End Sub
 
     Private Function GetDeckString(deck As Deck) As String
@@ -229,6 +229,10 @@ Public Class GameModel
     Public Function GetTurn() As Integer
         Return turn
     End Function
+
+    Public Sub SetDifficulty(new_diff As Integer)
+        AI_difficulty = new_diff
+    End Sub
 
     Public Sub Skip()
         players(turn).Skip()
