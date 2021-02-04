@@ -45,6 +45,12 @@ Public Class DNSModel
     End Function
 
     Public Sub StartServer()
+        If wc IsNot Nothing Then
+            If Not wc.GetIsClient Then
+                WriteToLog("Sever already being hosted.", False)
+                Exit Sub
+            End If
+        End If
         wc = New WebController(False, Me)
         Dim started As Boolean = wc.StartServer()
         If started Then dnsView.WriteToLog(dnsView.serverInfo, "Server started successfully. Set host username in client panel!")

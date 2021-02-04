@@ -28,6 +28,5 @@ TODO:
   - Case for two clients with the same name!! clients or server players.
   
 - WIP networking:
-  - Grey out start server button if clicked
   - Stop server joining its own game
   
