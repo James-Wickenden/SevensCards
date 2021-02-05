@@ -29,4 +29,4 @@ TODO:
 - WIP networking:
   - List players in server when starting a web game
   - Case for two clients with the same name!! clients or server players.
-  
+  - Server closing dnsview doesn't tell clients; use formclose handler

@@ -61,8 +61,11 @@ Public Class DNSModel
         If wc IsNot Nothing Then
             If Not wc.GetIsClient Then
                 WriteToLog("Stopping server...", False)
+                wc.SendToClients("STOPSERVER:")
                 Dim stopped As Boolean = wc.StopServer()
                 If stopped Then wc = Nothing
+                WipePlayerList()
+                WriteToLog("Server successfully stopped.", False)
             Else
                 WriteToLog("Already connected as a client.", False)
             End If
@@ -93,6 +96,13 @@ Public Class DNSModel
             End If
         Next
         SetUsernames(usernamesRes.ToArray)
+    End Sub
+
+    Private Sub WipePlayerList()
+        For i As Integer = 0 To 3
+            dnsView.playerNames(i).Text = ""
+            dnsView.playerNames(i).ForeColor = Color.Black
+        Next
     End Sub
 
     Public Sub BeginGame()
@@ -129,6 +139,14 @@ Public Class DNSModel
                 ReceiveOnlineMove(rawData.Split(":")(1))
             Case "READYCLIENT"
                 readyClients += 1
+            Case "STOPSERVER"
+                If wc IsNot Nothing Then
+                    If wc.GetIsClient Then
+                        wc = Nothing
+                        WipePlayerList()
+                        WriteToLog("The server was stopped.", True)
+                    End If
+                End If
         End Select
     End Sub
 
