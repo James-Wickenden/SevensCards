@@ -13,6 +13,10 @@ Public Class DNSView
         PanelSetup()
     End Sub
 
+    Private Sub DNSView_Close(ByVal sender As Object, ByVal e As FormClosingEventArgs) Handles Me.FormClosing
+        dnsModel.StopServer()
+    End Sub
+
     Public Sub SetDNSModel(dnsModel As DNSModel)
         Me.dnsModel = dnsModel
     End Sub
