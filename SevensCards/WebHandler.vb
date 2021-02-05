@@ -51,6 +51,13 @@ public Module WebHandler
             Return False
         End Function
 
+        Public Function StopServer() As Boolean
+            If server IsNot Nothing Then
+                Return server.StopServer()
+            End If
+            Return False
+        End Function
+
         Public Function Connect(ServerIP As String) As Boolean
             If client IsNot Nothing Then
                 Return client.Connect(ServerIP)
@@ -222,7 +229,7 @@ public Module WebHandler
             Return True
         End Function
 
-        Private Sub StopServer()
+        Public Function StopServer() As Boolean
             If ServerStatus Then
                 ServerTrying = True
                 Try
@@ -236,7 +243,8 @@ public Module WebHandler
                     StopServer()
                 End Try
             End If
-        End Sub
+            Return True
+        End Function
 
         Public Sub SendToClients(data As String)
             If ServerStatus Then

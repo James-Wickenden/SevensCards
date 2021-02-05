@@ -57,6 +57,20 @@ Public Class DNSModel
         UpdatePlayers({username})
     End Sub
 
+    Public Sub StopServer()
+        If wc IsNot Nothing Then
+            If Not wc.GetIsClient Then
+                WriteToLog("Stopping server...", False)
+                Dim stopped As Boolean = wc.StopServer()
+                If stopped Then wc = Nothing
+            Else
+                WriteToLog("Already connected as a client.", False)
+            End If
+        Else
+            WriteToLog("No server currently running on this instance.", False)
+        End If
+    End Sub
+
     Private Function ParseUsernames(usernames As String) As String()
         Dim splitUsers As String() = usernames.Split(",")
 

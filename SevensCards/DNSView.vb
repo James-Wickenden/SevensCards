@@ -146,6 +146,9 @@ Public Class DNSView
         Dim loadGame_but As New Button
         fp.objectHandler.AddButton(hostPanel, loadGame_but, 70, 140, 30, 120, "Begin Game", AddressOf dnsModel.BeginGame)
 
+        Dim stopServer_but As New Button
+        fp.objectHandler.AddButton(hostPanel, stopServer_but, 70, 260, 30, 120, "Stop Server", AddressOf dnsModel.StopServer)
+
         Dim showIPs_verbose_but As New Button
         fp.objectHandler.AddButton(hostPanel, showIPs_verbose_but, 20, 300, 30, 120, "Show local IPs", AddressOf dnsModel.ListDNS_Addresses)
     End Sub
