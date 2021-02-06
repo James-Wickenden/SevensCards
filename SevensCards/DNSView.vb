@@ -14,6 +14,7 @@ Public Class DNSView
     End Sub
 
     Private Sub DNSView_Close(ByVal sender As Object, ByVal e As FormClosingEventArgs) Handles Me.FormClosing
+        If sender.ToString.Contains("Expired_DNSView") Then Exit Sub
         dnsModel.StopServer()
     End Sub
 

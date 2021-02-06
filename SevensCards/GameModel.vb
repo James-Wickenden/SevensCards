@@ -19,6 +19,7 @@ Public Class GameModel
         gameView = New GameView()
         gameView.SetGameModel(Me)
         gameView.Show()
+        If Me.mode = FunctionPool.Mode.ONLINE Then menu.Text = "Expired_DNSView"
         menu.Close()
         AI_difficulty = difficulty
 
