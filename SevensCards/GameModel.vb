@@ -63,7 +63,7 @@ Public Class GameModel
         If mode = FunctionPool.Mode.OFFLINE Then
             gameStr &= " You are " & GetNameRef(0) & "." & vbCrLf
         ElseIf mode = FunctionPool.Mode.ONLINE Then
-            Dim myTurn As Integer = 0
+            gameStr &= "Players in game in turn order: " & String.Join(",", dnsModel.GetUsernames) & vbCrLf
             gameStr &= " You are " & dnsModel.GetUsername & vbCrLf
         Else
             gameStr &= vbCrLf
@@ -183,6 +183,7 @@ Public Class GameModel
     End Sub
 
     Public Sub GameClose()
+        If wc Is Nothing Then End
         If Not wc.GetIsClient Then wc.SendToClients("REMOVED:" & dnsModel.GetUsername)
         End
     End Sub
@@ -264,7 +265,7 @@ Public Class GameModel
     End Sub
 
     Public Sub Move(card As Card)
-        If dnsModel.GetGameEndedPrematurely Then Exit Sub
+        If mode = FunctionPool.Mode.ONLINE And dnsModel IsNot Nothing Then If dnsModel.GetGameEndedPrematurely Then Exit Sub
         Dim skipped As Boolean = False
         If card Is Nothing Then skipped = True
 

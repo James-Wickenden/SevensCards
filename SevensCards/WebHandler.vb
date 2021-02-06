@@ -316,6 +316,7 @@ public Module WebHandler
             Catch ex As Exception
                 For i As Integer = 0 To Clients.Count - 1
                     If Not Clients(i).Client.Connected Then
+                        MsgBox("killing client " & i)
                         RemoveClient(Clients(i))
                         Exit For
                     End If
