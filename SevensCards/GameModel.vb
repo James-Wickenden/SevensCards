@@ -60,15 +60,15 @@ Public Class GameModel
             gameStr &= " (" & diff_dict(AI_difficulty) & ")"
         End If
 
-        gameStr &= vbCrLf & GetNameRef(turn) & " begins."
+        gameStr &= vbCrLf
         If mode = FunctionPool.Mode.OFFLINE Then
-            gameStr &= " You are " & GetNameRef(0) & "." & vbCrLf
+            gameStr &= " You are " & GetNameRef(0) & ". "
         ElseIf mode = FunctionPool.Mode.ONLINE Then
-            gameStr &= "Players in game in turn order: " & String.Join(",", dnsModel.GetUsernames) & vbCrLf
-            gameStr &= " You are " & dnsModel.GetUsername & vbCrLf
-        Else
-            gameStr &= vbCrLf
+            gameStr &= " Players in game in turn order: " & vbCrLf & "  " & String.Join(", " & vbCrLf & "  ", dnsModel.GetUsernames)
+            gameStr &= vbCrLf & " You are " & dnsModel.GetUsername & ". "
         End If
+
+        gameStr &= GetNameRef(turn) & " begins." & vbCrLf
 
         If mode = FunctionPool.Mode.ONLINE Then
             If turn = GetMyTurnIndex() Then gameStr &= "YOU START!" & vbCrLf
