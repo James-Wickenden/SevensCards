@@ -24,7 +24,4 @@ TODO:
 - Networking:
   - Case for already having a server running with that IP
   - Case for joining a game in session
-  - Stop Sever button in lobby
-  
-- WIP networking:
-  - Case for two clients with the same name!! clients or server players.
+  - Clients infinite loop if the server stops
