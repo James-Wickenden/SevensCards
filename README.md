@@ -27,5 +27,4 @@ TODO:
   - Stop Sever button in lobby
   
 - WIP networking:
-  - List players in server when starting a web game
   - Case for two clients with the same name!! clients or server players.

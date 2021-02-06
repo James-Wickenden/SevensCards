@@ -115,6 +115,9 @@ Public Class DNSModel
     Public Sub HandleIncomingMessage(client As TcpClient, rawData As String)
         Select Case rawData.Split(":")(0)
             Case "USERNAME"
+                If String.Join(",", GetUsernames).Contains(rawData.Split(":")(1)) And Not wc.GetIsClient Then
+                    wc.SendToClients("SAMENAME:" & client.Client.RemoteEndPoint.ToString)
+                End If
                 ServerDistributeUpdatedUsernames(client, rawData)
             Case "USERNAMES"
                 UpdatePlayers(ParseUsernames(rawData.Split(":")(1)))
@@ -146,6 +149,16 @@ Public Class DNSModel
                         WipePlayerList()
                         WriteToLog("The server was stopped.", True)
                     End If
+                End If
+            Case "SAMENAME"
+                If client.Client.LocalEndPoint.ToString.Split(":")(1) = rawData.Split(":")(2) Then
+                    Dim cloneCount As Integer = 1
+                    Dim newname As String = username & "(1)"
+                    While String.Join(",", wc.GetClientUsernames).Contains(newname)
+                        cloneCount += 1
+                        newname = username & "(" & cloneCount & ")"
+                    End While
+                    SetUsername(newname)
                 End If
         End Select
     End Sub

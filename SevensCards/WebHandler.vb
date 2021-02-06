@@ -58,6 +58,12 @@ public Module WebHandler
             Return False
         End Function
 
+        Public Sub RemoveClient(client As TcpClient)
+            If server IsNot Nothing Then
+                server.RemoveClient(client)
+            End If
+        End Sub
+
         Public Function Connect(ServerIP As String) As Boolean
             If client IsNot Nothing Then
                 Return client.Connect(ServerIP)
@@ -265,7 +271,7 @@ public Module WebHandler
             End If
         End Sub
 
-        Private Sub RemoveClient(Client As TcpClient)
+        Public Sub RemoveClient(Client As TcpClient)
             Try
                 WriteToLog("Client removed: " & Client.Client.RemoteEndPoint.ToString)
                 Dim leaver As String = Usernames(Client.Client.RemoteEndPoint.ToString)
@@ -316,7 +322,7 @@ public Module WebHandler
             Catch ex As Exception
                 For i As Integer = 0 To Clients.Count - 1
                     If Not Clients(i).Client.Connected Then
-                        MsgBox("killing client " & i)
+                        WriteToLog("Removing client " & i & " from lobby")
                         RemoveClient(Clients(i))
                         Exit For
                     End If
