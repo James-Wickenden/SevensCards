@@ -113,14 +113,13 @@ Public Class DNSModel
     End Sub
 
     Public Sub HandleIncomingMessage(client As TcpClient, rawData As String)
+        If rawData Is Nothing Then Exit Sub
         Select Case rawData.Split(":")(0)
             Case "USERNAME"
-                If String.Join(",", GetUsernames).Contains(rawData.Split(":")(1)) And Not wc.GetIsClient Then
-                    wc.SendToClients("SAMENAME:" & client.Client.RemoteEndPoint.ToString)
-                End If
                 ServerDistributeUpdatedUsernames(client, rawData)
             Case "USERNAMES"
                 UpdatePlayers(ParseUsernames(rawData.Split(":")(1)))
+                If wc.GetIsClient Then CheckForSameUsername()
             Case "REMOVED"
                 If wc.GetIsClient And gameModel IsNot Nothing Then
                     HandleClientLeavingInSession(rawData.Split(":")(1))
@@ -150,17 +149,25 @@ Public Class DNSModel
                         WriteToLog("The server was stopped.", True)
                     End If
                 End If
-            Case "SAMENAME"
-                If client.Client.LocalEndPoint.ToString.Split(":")(1) = rawData.Split(":")(2) Then
-                    Dim cloneCount As Integer = 1
-                    Dim newname As String = username & "(1)"
-                    While String.Join(",", wc.GetClientUsernames).Contains(newname)
-                        cloneCount += 1
-                        newname = username & "(" & cloneCount & ")"
-                    End While
-                    SetUsername(newname)
-                End If
         End Select
+    End Sub
+
+    Private Sub CheckForSameUsername()
+        Dim occurrences As Integer = 0
+        For Each name As String In GetUsernames()
+            If name = username Then occurrences += 1
+        Next
+        If occurrences = 1 Then Exit Sub
+
+        Dim cloneCount As Integer = 1
+            Dim newname As String = username & "(1)"
+            While String.Join(",", GetUsernames()).Contains(newname)
+                cloneCount += 1
+                newname = username & "(" & cloneCount & ")"
+            End While
+        SetUsername(newname)
+        WriteToLog("Name changed to " & newname & " due to multiple users with that name.", True)
+        dnsView.username_txt.Text = newname
     End Sub
 
     Private Sub HandleClientLeavingInSession(leaver As String)
@@ -180,8 +187,6 @@ Public Class DNSModel
         End If
 
         readyMoves.Enqueue(moveStr)
-
-        'If gameModel IsNot Nothing Then gameModel.ReceiveOnlineMove(moveStr)
     End Sub
 
     Private Sub ParseSetupBoard(gameInfo As String)

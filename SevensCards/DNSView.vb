@@ -3,7 +3,7 @@
 Public Class DNSView
     Private fp As New FunctionPool
     Private dnsModel As DNSModel
-    Public clientInfo, serverInfo As TextBox
+    Public clientInfo, serverInfo, username_txt As TextBox
     Public playerNames(3) As Label
     Public AIdifficulty_sel As New ComboBox
 
@@ -108,7 +108,7 @@ Public Class DNSView
         username_lbl.Font = New Font("Arial", 15)
         username_lbl.TextAlign = ContentAlignment.MiddleRight
 
-        Dim username_txt As New TextBox
+        username_txt = New TextBox
         fp.objectHandler.AddObject(connectPanel, username_txt, 70, 160, 30, 120, "")
 
         Dim username_but As New Button
