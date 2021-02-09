@@ -21,7 +21,3 @@ TODO:
 - Add a guide/help/about w/ git link and instructions
 - Commenting!!
 - Take AI Difficulty from sigmoid function to use slider
-
-- Networking:
-  - Case for already having a server running with that IP
-  - Case for joining a game in session

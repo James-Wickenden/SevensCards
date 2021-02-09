@@ -283,11 +283,12 @@ public Module WebHandler
         Public Sub RemoveClient(Client As TcpClient)
             Try
                 WriteToLog("Client removed: " & Client.Client.RemoteEndPoint.ToString)
-                Dim leaver As String = Usernames(Client.Client.RemoteEndPoint.ToString)
+                Dim leaverIP As String = Client.Client.RemoteEndPoint.ToString
+                Dim leaver As String = Usernames(leaverIP)
                 Usernames.Remove(Client.Client.RemoteEndPoint.ToString)
                 Client.Close()
                 Clients.Remove(Client)
-                dnsModel.HandleIncomingMessage(Nothing, "REMOVED:" & leaver)
+                dnsModel.HandleIncomingMessage(Nothing, "REMOVED:" & leaver & "-" & leaverIP.Replace(":", "/"))
             Catch ex As Exception
 
             End Try

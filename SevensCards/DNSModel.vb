@@ -8,10 +8,11 @@ Public Class DNSModel
     Private wc As WebController
     Private username As String
     Private playerNames() As String = {}
-    Private gameModel As GameModel
+    Private gameModel As GameModel = Nothing
     Private readyClients As Integer = 0
     Private readyMoves As New Queue()
     Private gameEndedPrematurely As Boolean
+    Private spectators As New List(Of String)
 
     Public Sub New(menu As Menu)
         dnsView = New DNSView()
@@ -116,7 +117,14 @@ Public Class DNSModel
         If rawData Is Nothing Then Exit Sub
         Select Case rawData.Split(":")(0)
             Case "USERNAME"
-                ServerDistributeUpdatedUsernames(client, rawData)
+                If gameModel Is Nothing Then
+                    ServerDistributeUpdatedUsernames(client, rawData)
+                Else
+                    If Not spectators.Contains(client.Client.RemoteEndPoint.ToString) Then
+                        spectators.Add(client.Client.RemoteEndPoint.ToString)
+                        gameModel.WriteToGameLog("(A spectator joins. " & spectators.Count & " spectators are watching.)")
+                    End If
+                End If
             Case "USERNAMES"
                 UpdatePlayers(ParseUsernames(rawData.Split(":")(1)))
                 If wc.GetIsClient Then CheckForSameUsername()
@@ -172,9 +180,21 @@ Public Class DNSModel
     End Sub
 
     Private Sub HandleClientLeavingInSession(leaver As String)
-        If Not wc.GetIsClient Then
-            wc.SendToClients("REMOVED:" & leaver)
+        Dim leavername As String = leaver
+        If leaver.Contains("-") Then
+            Dim leaverIP As String = leaver.Split("-")(1).Replace("/", ":")
+            If spectators.Contains(leaverIP) Then
+                spectators.Remove(leaverIP)
+                gameModel.WriteToGameLog("(A spectator left. " & spectators.Count & " spectators remain.)")
+                Exit Sub
+            Else
+                leavername = leaver.Split("_")(0)
+                If Not wc.GetIsClient Then
+                    wc.SendToClients("REMOVED:" & leavername)
+                End If
+            End If
         End If
+
         gameModel.WriteToGameLog(leaver & " left! The game is ended prematurely.")
         gameEndedPrematurely = True
     End Sub
