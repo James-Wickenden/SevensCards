@@ -64,6 +64,10 @@ public Module WebHandler
             End If
         End Sub
 
+        Public Sub DisconnectClient()
+            If isClient Then client.Disconnect()
+        End Sub
+
         Public Function Connect(ServerIP As String) As Boolean
             If client IsNot Nothing Then
                 Return client.Connect(ServerIP)
@@ -129,6 +133,11 @@ public Module WebHandler
         Public Function GetIsConnected() As Boolean
             Return isConnected
         End Function
+
+        Public Sub Disconnect()
+            'Client.Close()
+            Client.Client.Dispose()
+        End Sub
 
         Public Function Connect(ServerIP As String) As Boolean
             Me.ServerIP = ServerIP

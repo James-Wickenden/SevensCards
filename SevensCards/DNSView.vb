@@ -103,6 +103,9 @@ Public Class DNSView
         fp.objectHandler.AddButton(connectPanel, connectButton, 20, 300, 30, 120, "Connect",
                                    New Action(Sub() dnsModel.ClientConnect(connectButton, connectIP_txt.Text)))
 
+        Dim disconnectButton As New Button
+        fp.objectHandler.AddButton(connectPanel, disconnectButton, 120, 300, 30, 120, "Disconnect", AddressOf dnsModel.ClientDisconnect)
+
         Dim username_lbl As New Label
         fp.objectHandler.AddObject(connectPanel, username_lbl, 70, 20, 30, 120, "Username:")
         username_lbl.Font = New Font("Arial", 15)

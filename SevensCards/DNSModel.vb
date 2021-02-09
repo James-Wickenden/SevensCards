@@ -47,7 +47,7 @@ Public Class DNSModel
     Public Sub StartServer()
         If wc IsNot Nothing Then
             If Not wc.GetIsClient Then
-                WriteToLog("Sever already being hosted.", False)
+                WriteToLog("Server already being hosted.", False)
                 Exit Sub
             End If
         End If
@@ -288,6 +288,15 @@ Public Class DNSModel
         End If
 
         wc.SendToServer("USERNAME:" & username)
+    End Sub
+
+    Public Sub ClientDisconnect()
+        If wc Is Nothing Then Exit Sub
+        If wc.GetIsClient Then
+            wc.DisconnectClient()
+            wc = Nothing
+            WipePlayerList()
+        End If
     End Sub
 
     Public Sub WriteToLog(msg As String, isClient As Boolean)
