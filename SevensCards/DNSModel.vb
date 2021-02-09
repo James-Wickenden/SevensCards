@@ -147,6 +147,7 @@ Public Class DNSModel
                         wc = Nothing
                         WipePlayerList()
                         WriteToLog("The server was stopped.", True)
+                        client.Close()
                     End If
                 End If
         End Select

@@ -24,4 +24,3 @@ TODO:
 - Networking:
   - Case for already having a server running with that IP
   - Case for joining a game in session
-  - Clients infinite loop if the server stops

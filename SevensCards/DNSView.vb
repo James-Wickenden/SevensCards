@@ -125,7 +125,7 @@ Public Class DNSView
             name &= Microsoft.VisualBasic.Chr(generator.Next(Asc("a"), Asc("z")))
         Next
         username_txt.Text = name
-        username_txt.Text = "test"
+        'username_txt.Text = "test"
         SetUsername(username_txt.Text)
     End Sub
 
