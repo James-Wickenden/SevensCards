@@ -19,21 +19,21 @@
     End Sub
 
     Private Sub PanelSetup()
-        fp.objectHandler.AddObject(Me, boardPanel, 0, 0, ((CARDHEIGHT + 10) * 4) + 30, ((CARDWIDTH + 10) * 13) + 50, "")
+        fp.objectHandler.AddObject(Me, Me, boardPanel, 0, 0, ((CARDHEIGHT + 10) * 4) + 30, ((CARDWIDTH + 10) * 13) + 50, "")
         boardPanel.BackColor = Color.DarkGreen
 
-        fp.objectHandler.AddObject(Me, handsPanel, boardPanel.Height, 0, ((CARDHEIGHT + 4) * 10) + 20, boardPanel.Width, "")
+        fp.objectHandler.AddObject(Me, Me, handsPanel, boardPanel.Height, 0, ((CARDHEIGHT + 4) * 10) + 20, boardPanel.Width, "")
         handsPanel.Height = Me.Height - handsPanel.Top
         handsPanel.BackColor = Color.BurlyWood
 
-        fp.objectHandler.AddObject(Me, logPanel, 0, boardPanel.Width, Me.Height, (Me.Width - boardPanel.Width), "")
+        fp.objectHandler.AddObject(Me, Me, logPanel, 0, boardPanel.Width, Me.Height, (Me.Width - boardPanel.Width), "")
         LogSetup()
 
-        fp.objectHandler.AddButton(handsPanel, but_Skip, 20, ((CARDWIDTH + 10) * 12) + 40, 50, CARDWIDTH, "Skip", AddressOf Skip)
+        fp.objectHandler.AddButton(Me, handsPanel, but_Skip, 20, ((CARDWIDTH + 10) * 12) + 40, 50, CARDWIDTH, "Skip", AddressOf Skip)
     End Sub
 
     Private Sub LogSetup()
-        fp.objectHandler.AddObject(logPanel, gameLog, 0, 0, logPanel.Height - 40, logPanel.Width - 15, ">")
+        fp.objectHandler.AddObject(Me, logPanel, gameLog, 0, 0, logPanel.Height - 40, logPanel.Width - 15, ">")
 
         gameLog.Multiline = True
         gameLog.ReadOnly = True
@@ -75,12 +75,12 @@
         Next
 
         Dim top As Integer = CalculateAPTop(turn)
-        fp.objectHandler.AddObject(handsPanel, activePlayerPanel, top, 0, CARDHEIGHT, 20, "")
+        fp.objectHandler.AddObject(Me, handsPanel, activePlayerPanel, top, 0, CARDHEIGHT, 20, "")
         activePlayerPanel.BackColor = Color.Red
     End Sub
 
     Public Sub DrawCardOnBoard(card As Card)
-        Me.Invoke(Sub() fp.objectHandler.AddObject(boardPanel, card.GetView, 20 + (card.GetSuit * (CARDHEIGHT + 10)),
+        Me.Invoke(Sub() fp.objectHandler.AddObject(Me, boardPanel, card.GetView, 20 + (card.GetSuit * (CARDHEIGHT + 10)),
                                                    40 + (card.GetValue * (CARDWIDTH + 10)), CARDHEIGHT, CARDWIDTH, ""))
         card.SetFaceUp()
         Me.Invoke(Sub() card.GetView.BorderStyle = BorderStyle.FixedSingle)
@@ -88,9 +88,9 @@
 
     Public Sub DrawCardOnHand(card As Card, player As Player, i As Integer, turn As Integer, mode As FunctionPool.Mode)
 
-        Me.Invoke(Sub() fp.objectHandler.AddObject(handsPanel, card.GetView, 20 + (i * (CARDHEIGHT + 15)),
+        Me.Invoke(Sub() fp.objectHandler.AddObject(Me, handsPanel, card.GetView, 20 + (i * (CARDHEIGHT + 15)),
                                                    40 + (player.GetHandCards.IndexOf(card) * (CARDWIDTH + 10)), CARDHEIGHT, CARDWIDTH, ""))
-        Me.Invoke(Sub() fp.objectHandler.AddObject(handsPanel, card.GetValidBar, card.GetView.Top + CARDHEIGHT,
+        Me.Invoke(Sub() fp.objectHandler.AddObject(Me, handsPanel, card.GetValidBar, card.GetView.Top + CARDHEIGHT,
                                    40 + (player.GetHandCards.IndexOf(card) * (CARDWIDTH + 10)), 5, CARDWIDTH, card.GetValid.ToString))
 
         If (i = turn And mode = FunctionPool.Mode.HUM) Or (player.GetCanSeeHand And mode <> FunctionPool.Mode.HUM) Then Me.Invoke(Sub() card.SetFaceUp())
@@ -134,7 +134,7 @@
     Public Sub Finisher(ByVal place As Integer, ByVal turn As Integer)
         If place = 4 Then Me.Invoke(Sub() but_Skip.Dispose())
         placeLabels(place - 1) = New Label
-        Me.Invoke(Sub() fp.objectHandler.AddObject(handsPanel, placeLabels(place - 1), 20 + (turn * (CARDHEIGHT + 15)), 40, CARDHEIGHT, CARDWIDTH, place))
+        Me.Invoke(Sub() fp.objectHandler.AddObject(Me, handsPanel, placeLabels(place - 1), 20 + (turn * (CARDHEIGHT + 15)), 40, CARDHEIGHT, CARDWIDTH, place))
         placeLabels(place - 1).Font = New Font("Arial", 40)
     End Sub
 

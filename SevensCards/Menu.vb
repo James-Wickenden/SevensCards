@@ -6,16 +6,16 @@
 
     Private Sub Menu_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         fp.FormSetup(Me, "MENU")
-        fp.objectHandler.AddButton(Me, but_OffGame, 25, 25, 50, 150, "Offline Game", AddressOf Load_OffGame)
-        fp.objectHandler.AddButton(Me, but_HUMGame, 100, 25, 50, 150, "HUM Game", AddressOf Load_HUMGame)
-        fp.objectHandler.AddButton(Me, but_COMGame, 175, 25, 50, 150, "COM Game", AddressOf Load_COMGame)
-        fp.objectHandler.AddButton(Me, but_WebGame, 250, 25, 50, 150, "Web Game", AddressOf Load_WebGame)
+        fp.objectHandler.AddButton(Me, Me, but_OffGame, 25, 25, 50, 150, "Offline Game", AddressOf Load_OffGame)
+        fp.objectHandler.AddButton(Me, Me, but_HUMGame, 100, 25, 50, 150, "HUM Game", AddressOf Load_HUMGame)
+        fp.objectHandler.AddButton(Me, Me, but_COMGame, 175, 25, 50, 150, "COM Game", AddressOf Load_COMGame)
+        fp.objectHandler.AddButton(Me, Me, but_WebGame, 250, 25, 50, 150, "Web Game", AddressOf Load_WebGame)
 
         txt_AI_difficulty.Items.AddRange({"EASY", "MEDIUM", "HARD"})
         txt_AI_difficulty.DropDownStyle = ComboBoxStyle.DropDownList
         lbl_AI_difficulty.Font = New Font("", 15)
-        fp.objectHandler.AddObject(Me, txt_AI_difficulty, 325, 175, 50, 150, "")
-        fp.objectHandler.AddObject(Me, lbl_AI_difficulty, 325, 25, 50, 150, "AI Difficulty: ")
+        fp.objectHandler.AddObject(Me, Me, txt_AI_difficulty, 325, 175, 50, 150, "")
+        fp.objectHandler.AddObject(Me, Me, lbl_AI_difficulty, 325, 25, 50, 150, "AI Difficulty: ")
         txt_AI_difficulty.SelectedIndex = 1
     End Sub
 
