@@ -37,7 +37,7 @@ Public Class DNSView
     Private Sub PanelSetup()
         Dim serverPanel, clientPanel As New Panel
         Dim serverBut As New Button
-        fp.objectHandler.AddButton(Me, serverBut, 20, Me.Width / 2 + 20, 50, 120, "Host Server",
+        fp.objectHandler.AddButton(Me, serverBut, 20, CInt(Me.Width / 2 + 20), 50, 120, "Host Server",
                                    New Action(Sub() ServerPanelSetup(serverBut, serverPanel)))
         ClientPanelSetup(clientPanel)
     End Sub

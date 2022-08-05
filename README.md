@@ -15,9 +15,10 @@ The online repository can be found at <https://github.com/James-Wickenden/Sevens
 
 TODO:
 
-- Implement networking (WIP)
 - Clean up GameModel & GameView interfaces
-- Native UI scaling (!!)
+- Native UI scaling (wip!)
+  - Use FunctionPool function with 1080p ideal size and pass form as param to return new object size
+  
 - Add a guide/help/about w/ git link and instructions
 - Commenting!!
-- Take AI Difficulty from sigmoid function to use slider
+- New harder AI difficulty using PASSing? (+small chance for HARD to PASS?)
