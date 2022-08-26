@@ -142,7 +142,7 @@ Public Class GameModel
             Else
                 players(i) = New Player_COM(AI_difficulty)
             End If
-            players(i).SetCanSeeHand(True)
+            'players(i).SetCanSeeHand(True)
 
             players(i).SetCallback(AddressOf ResultCallback)
 

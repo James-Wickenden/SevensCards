@@ -93,7 +93,9 @@
         Me.Invoke(Sub() fp.objectHandler.AddObject(Me, handsPanel, card.GetValidBar, 5 + ((i + 1) * (CARDHEIGHT + 15)),
                                    40 + (player.GetHandCards.IndexOf(card) * (CARDWIDTH + 10)), 5, CARDWIDTH, card.GetValid.ToString))
 
-        If (i = turn And mode = FunctionPool.Mode.HUM) Or (player.GetCanSeeHand And mode <> FunctionPool.Mode.HUM) Then Me.Invoke(Sub() card.SetFaceUp())
+        If (i = turn And mode = FunctionPool.Mode.HUM) Or (player.GetCanSeeHand And mode <> FunctionPool.Mode.HUM) Then
+            Me.Invoke(Sub() card.SetFaceUp())
+        End If
 
         AddHandler(card.GetView.MouseClick), AddressOf CardSClicked
         AddHandler(card.GetView.MouseDoubleClick), AddressOf CardDClicked
