@@ -26,14 +26,14 @@
         handsPanel.Height = Me.Height - handsPanel.Top
         handsPanel.BackColor = Color.BurlyWood
 
-        fp.objectHandler.AddObject(Me, Me, logPanel, 0, boardPanel.Width, Me.Height, (Me.Width - boardPanel.Width), "")
+        fp.objectHandler.AddObject(Me, Me, logPanel, 0, boardPanel.Width, Me.Height, (Me.Width - boardPanel.Width), "", shouldScale:=False)
         LogSetup()
 
         fp.objectHandler.AddButton(Me, handsPanel, but_Skip, 20, ((CARDWIDTH + 10) * 12) + 40, 50, CARDWIDTH, "Skip", AddressOf Skip)
     End Sub
 
     Private Sub LogSetup()
-        fp.objectHandler.AddObject(Me, logPanel, gameLog, 0, 0, logPanel.Height - 40, logPanel.Width - 15, ">")
+        fp.objectHandler.AddObject(Me, logPanel, gameLog, 0, 0, logPanel.Height - 40, logPanel.Width - 15, ">", shouldScale:=False)
 
         gameLog.Multiline = True
         gameLog.ReadOnly = True
@@ -104,8 +104,9 @@
         If Not hand.Contains(card) Then Exit Sub
         For i As Integer = hand.IndexOf(card) To hand.Count - 1
             Dim temp As Integer = i
-            Me.Invoke(Sub() hand(temp).GetView.Left -= (CARDWIDTH + 10))
-            Me.Invoke(Sub() hand(temp).GetValidBar.Left -= (CARDWIDTH + 10))
+            Dim scaledCARDWITH As Integer = fp.objectHandler.ScaleDimension(CARDWIDTH + 10, form_width:=Me.Width)
+            Me.Invoke(Sub() hand(temp).GetView.Left -= (scaledCARDWITH))
+            Me.Invoke(Sub() hand(temp).GetValidBar.Left -= (scaledCARDWITH))
         Next
     End Sub
 
