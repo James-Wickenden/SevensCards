@@ -25,6 +25,7 @@ Public Class DNSView
     Public Sub WriteToLog(log As TextBox, str As String)
         Try
             Me.Invoke(Sub()
+                          If log Is Nothing Then Exit Sub
                           log.Text = log.Text.Remove(log.Text.Count - 1)
                           log.Text &= " " & str & vbCrLf & ">"
                           log.SelectionStart = log.Text.Length - 1

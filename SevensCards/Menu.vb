@@ -6,16 +6,58 @@
 
     Private Sub Menu_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         fp.FormSetup(Me, "MENU")
-        fp.objectHandler.AddButton(Me, Me, but_OffGame, 25, 25, 50, 150, "Offline Game", AddressOf Load_OffGame)
-        fp.objectHandler.AddButton(Me, Me, but_HUMGame, 100, 25, 50, 150, "HUM Game", AddressOf Load_HUMGame)
-        fp.objectHandler.AddButton(Me, Me, but_COMGame, 175, 25, 50, 150, "COM Game", AddressOf Load_COMGame)
-        fp.objectHandler.AddButton(Me, Me, but_WebGame, 250, 25, 50, 150, "Web Game", AddressOf Load_WebGame)
+        'fp.objectHandler.AddButton(Me, Me, but_OffGame, 25, 25, 50, 150, "Offline Game", AddressOf Load_OffGame)
+        'fp.objectHandler.AddButton(Me, Me, but_HUMGame, 100, 25, 50, 150, "HUM Game", AddressOf Load_HUMGame)
+        'fp.objectHandler.AddButton(Me, Me, but_COMGame, 175, 25, 50, 150, "COM Game", AddressOf Load_COMGame)
+        'fp.objectHandler.AddButton(Me, Me, but_WebGame, 250, 25, 50, 150, "Web Game", AddressOf Load_WebGame)
+
+        Dim tlp_menu As New TableLayoutPanel
+        With tlp_menu
+            .Name = "tlp_menuLayout"
+            .ColumnStyles.Add(New ColumnStyle(SizeType.Percent, 50.0F))
+            .ColumnStyles.Add(New ColumnStyle(SizeType.Percent, 50.0F))
+            .RowStyles.Add(New ColumnStyle(SizeType.Percent, 25.0F))
+            .RowStyles.Add(New ColumnStyle(SizeType.Percent, 25.0F))
+            .RowStyles.Add(New ColumnStyle(SizeType.Percent, 25.0F))
+            .RowStyles.Add(New ColumnStyle(SizeType.Percent, 25.0F))
+            .RowStyles.Add(New ColumnStyle(SizeType.Percent, 25.0F))
+            .Margin = New System.Windows.Forms.Padding(0, 0, 0, 0)
+            .ColumnCount = 2
+            .RowCount = 5
+            .Dock = DockStyle.Fill
+            .AutoSizeMode = Windows.Forms.AutoSizeMode.GrowAndShrink
+            .AutoSize = True
+            .Dock = DockStyle.Fill
+        End With
+        Me.Controls.Add(tlp_menu)
+        Dim buts(3) As Button
+        Dim lbls() As String = {"Offline Game", "HUM Game", "COM Game", "Web Game"}
+        Dim addrs() As Action = {AddressOf Load_OffGame, AddressOf Load_HUMGame, AddressOf Load_COMGame, AddressOf Load_WebGame}
+
+        For i As Integer = 0 To 3
+            buts(i) = New Button
+            With buts(i)
+                .TextAlign = ContentAlignment.MiddleCenter
+                .Text = lbls(i)
+                .BackColor = Color.White
+                .Dock = DockStyle.Fill
+                .AutoSize = True
+                .AutoSizeMode = AutoSizeMode.GrowAndShrink
+            End With
+            AddHandler(buts(i).Click), AddressOf addrs(i).Invoke
+            tlp_menu.Controls.Add(buts(i), 0, i)
+        Next
 
         txt_AI_difficulty.Items.AddRange({"EASY", "MEDIUM", "HARD"})
         txt_AI_difficulty.DropDownStyle = ComboBoxStyle.DropDownList
         lbl_AI_difficulty.Font = New Font("", 15)
-        fp.objectHandler.AddObject(Me, Me, txt_AI_difficulty, 325, 175, 50, 150, "")
-        fp.objectHandler.AddObject(Me, Me, lbl_AI_difficulty, 325, 25, 50, 150, "AI Difficulty: ")
+        'fp.objectHandler.AddObject(Me, Me, txt_AI_difficulty, 325, 175, 50, 150, "")
+        'fp.objectHandler.AddObject(Me, Me, lbl_AI_difficulty, 325, 25, 50, 150, "AI Difficulty: ")
+
+        lbl_AI_difficulty.Text = "AI Difficulty:"
+        lbl_AI_difficulty.AutoSize = True
+        tlp_menu.Controls.Add(lbl_AI_difficulty, 0, 4)
+        tlp_menu.Controls.Add(txt_AI_difficulty, 1, 4)
         txt_AI_difficulty.SelectedIndex = 1
     End Sub
 
