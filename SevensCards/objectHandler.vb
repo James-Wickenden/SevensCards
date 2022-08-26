@@ -15,28 +15,27 @@
     Public Sub AddButton(f As Form, surface As Object, obj As Button,
                          top As Integer, left As Integer, height As Integer, width As Integer,
                          text As String, address As Action, Optional shouldScale As Boolean = True)
-        If shouldScale Then ScaleObject(f, top, left, height, width)
-        AddObject(f, surface, obj, top, left, height, width, text)
+        AddObject(f, surface, obj, top, left, height, width, text, shouldScale)
         obj.BackColor = Color.White
         AddHandler(obj.Click), AddressOf address.Invoke
     End Sub
 
     Public Function ScaleDimension(val As Integer, Optional form_width As Integer = -1, Optional form_height As Integer = -1) As Integer
         Dim scalingFactor As Double
-        If form_height <> -1 Then scalingFactor = form_height / 1056
-        If form_width <> -1 Then scalingFactor = form_width / 1936
+        If form_height <> -1 Then scalingFactor = form_height / 1056.0F
+        If form_width <> -1 Then scalingFactor = form_width / 1936.0F
 
-        Return CInt(val * scalingFactor)
+        Return CInt(Math.Floor(val * scalingFactor))
     End Function
 
     Private Sub ScaleObject(ByVal f As Form, ByRef top As Integer, ByRef left As Integer, ByRef height As Integer, ByRef width As Integer)
         Dim scalingFactorHeight As Double = f.Height / 1056
         Dim scalingFactorWidth As Double = f.Width / 1936
 
-        top *= scalingFactorHeight
-        height *= scalingFactorHeight
-        left *= scalingFactorWidth
-        width *= scalingFactorWidth
+        top = Math.Floor(top * scalingFactorHeight)
+        height = Math.Floor(height * scalingFactorHeight)
+        left = Math.Floor(left * scalingFactorWidth)
+        width = Math.Floor(width * scalingFactorWidth)
     End Sub
 
     Public Function AddTableLayoutPanel(parentObject As Object, name As String, rows As Integer, cols As Integer) As TableLayoutPanel
