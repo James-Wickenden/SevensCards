@@ -331,7 +331,7 @@ Public Class DNSModel
         Dim hostName As String = System.Net.Dns.GetHostName()
         Dim addresses As IPAddress() = Dns.GetHostEntry(hostName).AddressList()
 
-        If Verbose Then dnsView.WriteToLog(dnsView.serverInfo, "All Machine IP Addresses: ")
+        If Verbose Then dnsView.WriteToLog(dnsView.serverInfo, vbCrLf & "All Machine IP Addresses: ")
         For Each hostAdr As IPAddress In addresses
             If hostAdr.ToString().Contains("192.168") Then
                 ListDNS_Address(hostName, hostAdr.ToString())
