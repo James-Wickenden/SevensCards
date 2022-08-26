@@ -22,7 +22,7 @@
         fp.objectHandler.AddObject(Me, Me, boardPanel, 0, 0, ((CARDHEIGHT + 10) * 4) + 30, ((CARDWIDTH + 10) * 13) + 50, "")
         boardPanel.BackColor = Color.DarkGreen
 
-        fp.objectHandler.AddObject(Me, Me, handsPanel, boardPanel.Height, 0, ((CARDHEIGHT + 4) * 10) + 20, boardPanel.Width, "")
+        fp.objectHandler.AddObject(Me, Me, handsPanel, ((CARDHEIGHT + 10) * 4) + 30, 0, ((CARDHEIGHT + 4) * 10) + 20, ((CARDWIDTH + 10) * 13) + 50, "")
         handsPanel.Height = Me.Height - handsPanel.Top
         handsPanel.BackColor = Color.BurlyWood
 

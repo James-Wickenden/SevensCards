@@ -1,6 +1,8 @@
 ﻿Public Class ObjectHandler
 
-    Public Sub AddObject(f As Form, surface As Object, obj As Object, top As Integer, left As Integer, height As Integer, width As Integer, text As String)
+    Public Sub AddObject(f As Form, surface As Object, obj As Object,
+                         top As Integer, left As Integer, height As Integer, width As Integer,
+                         text As String)
         ScaleObject(f, top, left, height, width)
         obj.top = top
         obj.left = left
@@ -10,7 +12,9 @@
         surface.Controls.Add(obj)
     End Sub
 
-    Public Sub AddButton(f As Form, surface As Object, obj As Button, top As Integer, left As Integer, height As Integer, width As Integer, text As String, address As Action)
+    Public Sub AddButton(f As Form, surface As Object, obj As Button,
+                         top As Integer, left As Integer, height As Integer, width As Integer,
+                         text As String, address As Action)
         ScaleObject(f, top, left, height, width)
         AddObject(f, surface, obj, top, left, height, width, text)
         obj.BackColor = Color.White
