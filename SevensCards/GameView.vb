@@ -74,7 +74,7 @@
             Next
         Next
 
-        Dim top As Integer = CalculateAPTop(turn)
+        Dim top As Integer = ((CARDHEIGHT + 15) * turn) + 20
         fp.objectHandler.AddObject(Me, handsPanel, activePlayerPanel, top, 0, CARDHEIGHT, 20, "")
         activePlayerPanel.BackColor = Color.Red
     End Sub
@@ -90,7 +90,7 @@
 
         Me.Invoke(Sub() fp.objectHandler.AddObject(Me, handsPanel, card.GetView, 20 + (i * (CARDHEIGHT + 15)),
                                                    40 + (player.GetHandCards.IndexOf(card) * (CARDWIDTH + 10)), CARDHEIGHT, CARDWIDTH, ""))
-        Me.Invoke(Sub() fp.objectHandler.AddObject(Me, handsPanel, card.GetValidBar, card.GetView.Top + CARDHEIGHT,
+        Me.Invoke(Sub() fp.objectHandler.AddObject(Me, handsPanel, card.GetValidBar, 5 + ((i + 1) * (CARDHEIGHT + 15)),
                                    40 + (player.GetHandCards.IndexOf(card) * (CARDWIDTH + 10)), 5, CARDWIDTH, card.GetValid.ToString))
 
         If (i = turn And mode = FunctionPool.Mode.HUM) Or (player.GetCanSeeHand And mode <> FunctionPool.Mode.HUM) Then Me.Invoke(Sub() card.SetFaceUp())
@@ -111,7 +111,7 @@
     End Sub
 
     Private Function CalculateAPTop(turn As Integer) As Integer
-        Return ((CARDHEIGHT + 15) * turn) + 20
+        Return fp.objectHandler.ScaleDimension(((CARDHEIGHT + 15) * turn) + 20, form_height:=Me.Height)
     End Function
 
     Public Sub ChangePlayer(oldHand As List(Of Card), newHand As List(Of Card), turn As Integer, isOldHandVisible As Boolean, isNewHandVisible As Boolean)
