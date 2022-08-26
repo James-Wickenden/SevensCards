@@ -19,6 +19,10 @@ TODO:
 - Native UI scaling (wip!)
   - Use FunctionPool function with 1080p ideal size and pass form as param to return new object size
   
+- Esc to return to menu
+- Better random usernames
+- Add form resize options
+- Loading msg for game screen
 - Add a guide/help/about w/ git link and instructions
 - Commenting!!
 - New harder AI difficulty using PASSing? (+small chance for HARD to PASS?)

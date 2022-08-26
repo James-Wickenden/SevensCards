@@ -136,6 +136,7 @@ public Module WebHandler
 
         Public Sub Disconnect()
             'Client.Close()
+            If Client Is Nothing Then Exit Sub
             Client.Client.Dispose()
         End Sub
 

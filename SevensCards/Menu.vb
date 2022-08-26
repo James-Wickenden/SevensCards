@@ -1,22 +1,40 @@
 ﻿Public Class Menu
     Private fp As New FunctionPool
-    Private but_OffGame, but_HUMGame, but_COMGame, but_WebGame As New Button
+    Private buttonGameOptions(3) As Button
+    Private buttonLabels() As String = {"Offline Game", "HUM Game", "COM Game", "Web Game"}
+    Private buttonAddresses() As Action = {AddressOf Load_OffGame, AddressOf Load_HUMGame, AddressOf Load_COMGame, AddressOf Load_WebGame}
     Private txt_AI_difficulty As New ComboBox
     Private lbl_AI_difficulty As New Label
 
     Private Sub Menu_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         fp.FormSetup(Me, "MENU")
-        fp.objectHandler.AddButton(Me, Me, but_OffGame, 25, 25, 50, 150, "Offline Game", AddressOf Load_OffGame)
-        fp.objectHandler.AddButton(Me, Me, but_HUMGame, 100, 25, 50, 150, "HUM Game", AddressOf Load_HUMGame)
-        fp.objectHandler.AddButton(Me, Me, but_COMGame, 175, 25, 50, 150, "COM Game", AddressOf Load_COMGame)
-        fp.objectHandler.AddButton(Me, Me, but_WebGame, 250, 25, 50, 150, "Web Game", AddressOf Load_WebGame)
+
+        Dim tlp_menu As TableLayoutPanel = fp.objectHandler.AddTableLayoutPanel(Me, "tlp_menuLayout", 5, 2)
+
+        For i As Integer = 0 To 3
+            buttonGameOptions(i) = New Button
+            With buttonGameOptions(i)
+                .TextAlign = ContentAlignment.MiddleCenter
+                .Text = buttonLabels(i)
+                .BackColor = Color.White
+                .Dock = DockStyle.Fill
+                .AutoSize = True
+                .AutoSizeMode = AutoSizeMode.GrowAndShrink
+            End With
+
+            AddHandler(buttonGameOptions(i).Click), AddressOf buttonAddresses(i).Invoke
+            tlp_menu.Controls.Add(buttonGameOptions(i), 0, i)
+        Next
 
         txt_AI_difficulty.Items.AddRange({"EASY", "MEDIUM", "HARD"})
         txt_AI_difficulty.DropDownStyle = ComboBoxStyle.DropDownList
-        lbl_AI_difficulty.Font = New Font("", 15)
-        fp.objectHandler.AddObject(Me, Me, txt_AI_difficulty, 325, 175, 50, 150, "")
-        fp.objectHandler.AddObject(Me, Me, lbl_AI_difficulty, 325, 25, 50, 150, "AI Difficulty: ")
         txt_AI_difficulty.SelectedIndex = 1
+        tlp_menu.Controls.Add(txt_AI_difficulty, 1, 4)
+
+        lbl_AI_difficulty.Font = New Font("", 15)
+        lbl_AI_difficulty.Text = "AI Difficulty:"
+        lbl_AI_difficulty.AutoSize = True
+        tlp_menu.Controls.Add(lbl_AI_difficulty, 0, 4)
     End Sub
 
     Private Sub Load_OffGame()

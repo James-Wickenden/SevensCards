@@ -25,6 +25,7 @@ Public Class DNSView
     Public Sub WriteToLog(log As TextBox, str As String)
         Try
             Me.Invoke(Sub()
+                          If log Is Nothing Then Exit Sub
                           log.Text = log.Text.Remove(log.Text.Count - 1)
                           log.Text &= " " & str & vbCrLf & ">"
                           log.SelectionStart = log.Text.Length - 1
@@ -38,25 +39,23 @@ Public Class DNSView
         Dim serverPanel, clientPanel As New Panel
         Dim serverBut As New Button
         fp.objectHandler.AddButton(Me, Me, serverBut, 20, CInt(Me.Width / 2 + 20), 50, 120, "Host Server",
-                                   New Action(Sub() ServerPanelSetup(serverBut, serverPanel)))
+                                   New Action(Sub() ServerPanelSetup(serverBut, serverPanel)), shouldScale:=False)
         ClientPanelSetup(clientPanel)
     End Sub
 
     Private Sub ServerPanelSetup(sender As Button, serverPanel As Panel)
         sender.Dispose()
-        Dim width As Integer = Me.Width / 2
-        If Me.Width / 2 < 800 Then width = 800
-        fp.objectHandler.AddObject(Me, Me, serverPanel, 0, width, Me.Height, Me.Width - width, "")
+        fp.objectHandler.AddObject(Me, Me, serverPanel, 0, Me.Width / 2, Me.Height, Me.Width / 2, "", shouldScale:=False)
         serverPanel.BorderStyle = BorderStyle.Fixed3D
         serverPanel.BackColor = Me.BackColor
 
         Dim serverLabel As New Label
-        fp.objectHandler.AddObject(Me, serverPanel, serverLabel, 20, 20, 40, serverPanel.Width - 40, "SERVER")
+        fp.objectHandler.AddObject(Me, serverPanel, serverLabel, 20, 20, 40, serverPanel.Width - 40, "SERVER", shouldScale:=False)
         serverLabel.Font = New Font("Arial", 25)
 
         serverInfo = New TextBox
-        fp.objectHandler.AddObject(Me, serverPanel, serverInfo, 80, 20, serverPanel.Height / 2,
-                                   serverPanel.Width - 60, " ")
+        fp.objectHandler.AddObject(Me, serverPanel, serverInfo, 80, 20, serverPanel.Height / 3,
+                                   serverPanel.Width - 60, " ", shouldScale:=False)
         LogSetup(serverInfo, "Server IP Info")
 
         StartServerPanelSetup(serverPanel)
@@ -65,19 +64,17 @@ Public Class DNSView
     End Sub
 
     Private Sub ClientPanelSetup(clientPanel As Panel)
-        Dim width As Integer = Me.Width / 2
-        If Me.Width / 2 < 800 Then width = 800
-        fp.objectHandler.AddObject(Me, Me, clientPanel, 0, 0, Me.Height, width, "")
+        fp.objectHandler.AddObject(Me, Me, clientPanel, 0, 0, Me.Height, Me.Width / 2, "", shouldScale:=False)
         clientPanel.BorderStyle = BorderStyle.Fixed3D
         clientPanel.BackColor = Me.BackColor
 
         Dim clientLabel As New Label
-        fp.objectHandler.AddObject(Me, clientPanel, clientLabel, 20, 20, 40, clientPanel.Width - 40, "CLIENT")
+        fp.objectHandler.AddObject(Me, clientPanel, clientLabel, 20, 20, 40, clientPanel.Width - 40, "CLIENT", shouldScale:=False)
         clientLabel.Font = New Font("Arial", 25)
 
         clientInfo = New TextBox
-        fp.objectHandler.AddObject(Me, clientPanel, clientInfo, 80, 20, clientPanel.Height / 2,
-                                   clientPanel.Width - 40, " ")
+        fp.objectHandler.AddObject(Me, clientPanel, clientInfo, 80, 20, clientPanel.Height / 3,
+                                   clientPanel.Width - 40, " ", shouldScale:=False)
         LogSetup(clientInfo, "Client IP Info")
 
         ConnectPanelSetup(clientPanel)
@@ -86,36 +83,36 @@ Public Class DNSView
 
     Private Sub ConnectPanelSetup(clientPanel As Panel)
         Dim connectPanel As New Panel
-        fp.objectHandler.AddObject(Me, clientPanel, connectPanel, clientPanel.Height / 2 + 100, 20,
-                                   clientPanel.Height / 3 - 20, clientPanel.Width / 2 - 40, "")
+        fp.objectHandler.AddObject(Me, clientPanel, connectPanel, clientPanel.Height / 3 + 100, 20,
+                                   clientPanel.Height / 3 - 20, clientPanel.Width / 2 - 40, "", shouldScale:=False)
         connectPanel.BorderStyle = BorderStyle.FixedSingle
         connectPanel.BackColor = Color.Green
 
         Dim connectIP_lbl As New Label
         fp.objectHandler.AddObject(Me, connectPanel, connectIP_lbl, 20, 20, 30, 120, "IP Address:")
-        connectIP_lbl.Font = New Font("Arial", 15)
+        connectIP_lbl.Font = New Font("Arial", fp.objectHandler.ScaleDimension(15, Me.Width))
         connectIP_lbl.TextAlign = ContentAlignment.MiddleRight
 
         Dim connectIP_txt As New TextBox
-        fp.objectHandler.AddObject(Me, connectPanel, connectIP_txt, 20, 160, 30, 120, "192.168.0.23")
+        fp.objectHandler.AddObject(Me, connectPanel, connectIP_txt, 20, 160, 80, 120, "192.168.0.")
 
         Dim connectButton As New Button
-        fp.objectHandler.AddButton(Me, connectPanel, connectButton, 20, 300, 30, 120, "Connect",
+        fp.objectHandler.AddButton(Me, connectPanel, connectButton, 20, 300, 80, 120, "Connect",
                                    New Action(Sub() dnsModel.ClientConnect(connectButton, connectIP_txt.Text)))
 
         Dim disconnectButton As New Button
-        fp.objectHandler.AddButton(Me, connectPanel, disconnectButton, 120, 300, 30, 120, "Disconnect", AddressOf dnsModel.ClientDisconnect)
+        fp.objectHandler.AddButton(Me, connectPanel, disconnectButton, 220, 300, 80, 120, "Disconnect", AddressOf dnsModel.ClientDisconnect)
 
         Dim username_lbl As New Label
-        fp.objectHandler.AddObject(Me, connectPanel, username_lbl, 70, 20, 30, 120, "Username:")
-        username_lbl.Font = New Font("Arial", 15)
+        fp.objectHandler.AddObject(Me, connectPanel, username_lbl, 120, 20, 30, 120, "Username:")
+        username_lbl.Font = New Font("Arial", fp.objectHandler.ScaleDimension(15, Me.Width))
         username_lbl.TextAlign = ContentAlignment.MiddleRight
 
         username_txt = New TextBox
-        fp.objectHandler.AddObject(Me, connectPanel, username_txt, 70, 160, 30, 120, "")
+        fp.objectHandler.AddObject(Me, connectPanel, username_txt, 120, 160, 80, 120, "")
 
         Dim username_but As New Button
-        fp.objectHandler.AddButton(Me, connectPanel, username_but, 70, 300, 30, 120, "Set Username",
+        fp.objectHandler.AddButton(Me, connectPanel, username_but, 120, 300, 80, 120, "Set Username",
                                    New Action(Sub() SetUsername(username_txt.Text)))
 
         GenerateUsername(username_txt)
@@ -134,47 +131,47 @@ Public Class DNSView
 
     Private Sub StartServerPanelSetup(serverPanel As Panel)
         Dim hostPanel As New Panel
-        fp.objectHandler.AddObject(Me, serverPanel, hostPanel, serverPanel.Height / 2 + 100, 20,
-                                   serverPanel.Height / 3 - 20, serverPanel.Width - 60, "")
+        fp.objectHandler.AddObject(Me, serverPanel, hostPanel, serverPanel.Height / 3 + 100, 20,
+                                   serverPanel.Height / 3 - 20, serverPanel.Width - 60, "", shouldScale:=False)
         hostPanel.BorderStyle = BorderStyle.FixedSingle
         hostPanel.BackColor = Color.Green
 
         Dim AIdifficulty_lbl As New Label
-        fp.objectHandler.AddObject(Me, hostPanel, AIdifficulty_lbl, 20, 20, 30, 120, "AI difficulty:")
-        AIdifficulty_lbl.Font = New Font("Arial", 15)
+        fp.objectHandler.AddObject(Me, hostPanel, AIdifficulty_lbl, 20, 20, 30, 120, "AI difficulty:", shouldScale:=False)
+        AIdifficulty_lbl.Font = New Font("Arial", fp.objectHandler.ScaleDimension(15, Me.Width))
         AIdifficulty_lbl.TextAlign = ContentAlignment.MiddleRight
 
-        fp.objectHandler.AddObject(Me, hostPanel, AIdifficulty_sel, 20, 160, 30, 120, "")
+        fp.objectHandler.AddObject(Me, hostPanel, AIdifficulty_sel, 20, 160, 30, 120, "", shouldScale:=False)
         AIdifficulty_sel.Items.AddRange({"EASY", "MEDIUM", "HARD"})
         AIdifficulty_sel.SelectedIndex = 1
         AIdifficulty_sel.DropDownStyle = ComboBoxStyle.DropDownList
 
         Dim startServer_but As New Button
-        fp.objectHandler.AddButton(Me, hostPanel, startServer_but, 70, 20, 30, 120, "Start Server", AddressOf dnsModel.StartServer)
+        fp.objectHandler.AddButton(Me, hostPanel, startServer_but, 70, 20, 30, 120, "Start Server", AddressOf dnsModel.StartServer, shouldScale:=False)
 
         Dim loadGame_but As New Button
-        fp.objectHandler.AddButton(Me, hostPanel, loadGame_but, 70, 140, 30, 120, "Begin Game", AddressOf dnsModel.BeginGame)
+        fp.objectHandler.AddButton(Me, hostPanel, loadGame_but, 70, 140, 30, 120, "Begin Game", AddressOf dnsModel.BeginGame, shouldScale:=False)
 
         Dim stopServer_but As New Button
-        fp.objectHandler.AddButton(Me, hostPanel, stopServer_but, 70, 260, 30, 120, "Stop Server", AddressOf dnsModel.StopServer)
+        fp.objectHandler.AddButton(Me, hostPanel, stopServer_but, 70, 260, 30, 120, "Stop Server", AddressOf dnsModel.StopServer, shouldScale:=False)
 
         Dim showIPs_verbose_but As New Button
-        fp.objectHandler.AddButton(Me, hostPanel, showIPs_verbose_but, 20, 300, 30, 120, "Show local IPs", AddressOf dnsModel.ListDNS_Addresses)
+        fp.objectHandler.AddButton(Me, hostPanel, showIPs_verbose_but, 20, 300, 30, 120, "Show local IPs", AddressOf dnsModel.ListDNS_Addresses, shouldScale:=False)
     End Sub
 
     Private Sub CurClientsSetup(clientPanel As Panel)
         Dim playersPanel As New Panel
-        fp.objectHandler.AddObject(Me, clientPanel, playersPanel, clientPanel.Height / 2 + 100, clientPanel.Width / 2,
-                                   clientPanel.Height / 3 - 20, clientPanel.Width / 2 - 20, "")
+        fp.objectHandler.AddObject(Me, clientPanel, playersPanel, clientPanel.Height / 3 + 100, clientPanel.Width / 2,
+                                   clientPanel.Height / 3 - 20, clientPanel.Width / 2 - 20, "", shouldScale:=False)
 
         playersPanel.BorderStyle = BorderStyle.FixedSingle
         playersPanel.BackColor = Color.Green
         Dim titlelab As New Label
-        titlelab.Font = New Font("Arial", 20)
+        titlelab.Font = New Font("Arial", fp.objectHandler.ScaleDimension(15, Me.Width))
         fp.objectHandler.AddObject(Me, playersPanel, titlelab, 20, 20, 40, 160, "Players:")
 
         Dim playersIndices(3) As Label
-        Dim playerFont As New Font("Arial", 18)
+        Dim playerFont As New Font("Arial", fp.objectHandler.ScaleDimension(15, Me.Width))
 
         For i As Integer = 0 To playersIndices.Length - 1
             playersIndices(i) = New Label
