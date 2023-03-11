@@ -4,13 +4,17 @@
     Const CARDHEIGHT As Integer = 105
     Const CARDWIDTH As Integer = 70
     Private lastClicked As Object
-    Private boardPanel, handsPanel, activePlayerPanel, logPanel As New Panel
+    Private loadPanel, boardPanel, handsPanel, activePlayerPanel, logPanel As New Panel
     Private gameLog As New TextBox
     Private but_Skip As New Button
     Private placeLabels(3) As Label
 
     Private Sub GameView_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         fp.FormSetup(Me, gameModel.GetModeString)
+
+        loadPanel.BackColor = Color.Black
+        fp.objectHandler.AddObject(Me, Me, loadPanel, 0, 0, Me.Height, Me.Width, "")
+
         PanelSetup()
     End Sub
 
@@ -77,6 +81,7 @@
         Dim top As Integer = ((CARDHEIGHT + 15) * turn) + 20
         fp.objectHandler.AddObject(Me, handsPanel, activePlayerPanel, top, 0, CARDHEIGHT, 20, "")
         activePlayerPanel.BackColor = Color.Red
+        loadPanel.Dispose()
     End Sub
 
     Public Sub DrawCardOnBoard(card As Card)

@@ -16,9 +16,6 @@ The online repository can be found at <https://github.com/James-Wickenden/Sevens
 TODO:
 
 - Clean up GameModel & GameView interfaces
-- Native UI scaling (wip!)
-  - Use FunctionPool function with 1080p ideal size and pass form as param to return new object size
-  
 - Esc to return to menu
 - Better random usernames
 - Add form resize options
